@@ -25,28 +25,28 @@ are delivered back into the assets chain (as back notarizations)
 The workflow of the MoMoM value migration is following:
 - On the source chain user calls migrate_createburntransaction rpc and sends the burn transaction by sendrawtransaction call
 - On the source chain the user runs migrate_createimportransaction and passes to it the burn transaction and 'payouts' object in hex format 
-which he received from the previous call
-- On the main Komodo (KMD) chain the used calls migrate_completeimpottransaction where he passes the import transaction in hex format
-which he received from the previous call. On this stage the proof object for the burn transaction inside the import transaction 
+which user received from the previous call
+- On the main Komodo (KMD) chain the user calls migrate_completeimpottransaction where the user passes the import transaction in hex format which was received from the previous call. On this stage the proof object for the burn transaction inside the import transaction 
 is extended with MoMoM data. This allows to check the burn transaction on the destination chain by using standard Komodo notarization process
 without the need to create proof objects additionally
 
-## createrawtransaction
+## migrate_createburntransaction
 
-**createrawtransaction '[{ "txid": "id_string", "vout": number }, ... ]' '{ "address": amount, ... }'**
+**migrate_createburntransaction destChain destAddress amount [tokenid]**
 
-The `createrawtransaction` method creates a transaction, spending the given inputs and sending to the given addresses. The method returns a hex-encoded raw transaction.
-
-::: tip
-This is a raw transaction, and therefore the inputs are not signed and the transaction is not stored in the wallet nor transmitted to the network.
-:::
+The `migrate_createburntransaction` method creates a transaction burning some amount of coins or tokens and payouts for creating import transaction for the same amount of value.
 
 ### Arguments:
 
 Structure|Type|Description
 ---------|----|-----------
-"transactions"                               |(string, required)           |a json array of json objects
-"txid"                                       |(string, required)           |the transaction id
-"vout"                                       |(numeric, required)          |the output number
-"addresses"                                  |(string, required)           |a json object with addresses as keys and amounts as values
-"address"                                    |(numeric, required)          |the key is the address, the value is the COIN amount
+"destChain"                                  |(string, required)           |the destination chain name
+"destAddress"                                |(string, required)           |address on the destination chain where coins are to be sent or pubkey if tokens are to be sent
+"amount"                                     |(numeric, required)          |the amount in coins or tokens that will be burned on the source chain and created on the destination chain 
+"tokenid"                                  |(string, optional)             |token id, if set, tokens are to be sent
+
+### Response:
+
+Structure|Type|Description
+---------|----|-----------
+"transaction"                                |(string)                     |a hex string of the transaction
