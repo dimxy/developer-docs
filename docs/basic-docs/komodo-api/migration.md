@@ -18,8 +18,7 @@ The following migration RPC calls interact with the `komodod` software, and are 
 
 MoMoM notarized migration API allows the migration of coin or token value based on Komodo's highly scalable notarization process when 
 elected and trusted notary nodes store fingeprints (what is called MoM, merkle root of merkle roots) of assets blockchains' blocks 
-in the main komodo chain and fingerprints of fingerprints (what is called MoMoM, 'merkle root of merkle roots of merkle roots') 
-are delivered back into the assets chain (as back notarizations)
+in the main komodo chain and after that, fingerprints of fingerprints (what is called MoMoM, 'merkle root of merkle roots of merkle roots') are delivered back into the assets chain (as back notarizations)
 (more about the notarization process is here: https://komodoplatform.com/komodo-platforms-new-scalability-tech/).
 
 The workflow of the MoMoM value migration is following:
@@ -34,7 +33,10 @@ without the need to create proof objects additionally
 
 **migrate_createburntransaction destChain destAddress amount [tokenid]**
 
-The `migrate_createburntransaction` method creates a transaction burning some amount of coins or tokens and payouts for creating import transaction for the same amount of value.
+The `migrate_createburntransaction` method creates a transaction burning some amount of coins or tokens. The methods also creates payouts object used for creating an import transaction for the burned amount of value. This method should be called on the source chain.
+The method returns a created burn transaction which should be send to the source chain with `sendrawtransaction` method.
+After the burn transaction successfully mined you would need to wait for some time for back notarization with MoMoM fingerprints for the mined block with teh burn transaction would come to the chain.
+The other returned value `payouts` should be passed to the next method `migrate_createimporttransaction`.
 
 ### Arguments:
 
@@ -42,11 +44,51 @@ Structure|Type|Description
 ---------|----|-----------
 "destChain"                                  |(string, required)           |the destination chain name
 "destAddress"                                |(string, required)           |address on the destination chain where coins are to be sent or pubkey if tokens are to be sent
-"amount"                                     |(numeric, required)          |the amount in coins or tokens that will be burned on the source chain and created on the destination chain 
-"tokenid"                                  |(string, optional)             |token id, if set, tokens are to be sent
+"amount"                                     |(numeric, required)          |the amount in coins or tokens that will be burned on the source chain and created on the destination chain. If it is tokens the amount should be set only to 1 (as only migration of non-fungible  tokens are supported at this time)
+"tokenid"                                    |(string, optional)           |token id in hex, if set, it is tokens are to be migrated
 
 ### Response:
 
 Structure|Type|Description
 ---------|----|-----------
-"transaction"                                |(string)                     |a hex string of the transaction
+"hex"                                |(string)                     |a hex string of the created burn transaction
+"payouts"                            |(string)                     |a hex string of the created payouts (to be passed into migrate_createimporttransaction rpc method later)
+
+## migrate_createimporttransaction
+
+**migrate_createimporttransaction burntx payouts**
+
+The `migrate_createimporttransaction` method performs a initial step in creating an import transaction . This method should be called on the source chain.
+The method returns a created import transaction in hex. This value should be passed into the migrate_completeimporttransaction method on the main KMD chain to be extended with MoMoM proof object
+
+### Arguments:
+
+Structure|Type|Description
+---------|----|-----------
+"burntx"                                |(string, required)         |burn transaction in hex created on the previous step
+"payout"                                |(string, required)         |payouts object in hex created on the previous step and used for creating an import transaction
+
+### Response:
+
+a hex string of the created import transaction
+
+## migrate_completeimporttransaction
+
+**migrate_completeimporttransaction importtx**
+
+The `migrate_createimporttransaction` method performs a initial step in creating an import transaction . This method should be called on the source chain.
+The method returns a created import transaction in hex. This value should be passed into the migrate_completeimporttransaction method on the main KMD chain to be extended with MoMoM proof object
+
+### Arguments:
+
+Structure|Type|Description
+---------|----|-----------
+"burntx"                                |(string, required)         |burn transaction in hex created on the previous step
+"payout"                                |(string, required)         |payouts object in hex created on the previous step and used for creating an import transaction
+
+### Response:
+
+a hex string of the created import transaction
+
+
+
