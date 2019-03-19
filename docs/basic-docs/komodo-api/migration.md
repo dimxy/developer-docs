@@ -87,10 +87,11 @@ Because the burn transaction is stored in import transaction OP_RETURN vout whic
 
 ## migrate_createimporttransaction
 
-**migrate_createimporttransaction burntx payouts**
+**migrate_createimporttransaction burntx payouts [notaryTxid-1]...[notaryTxid-N]**
 
 The `migrate_createimporttransaction` method performs a initial step in creating an import transaction. This method should be called on the source chain.
-The method returns a created import transaction in hex. This string should be passed into the migrate_completeimporttransaction method on the main KMD chain to be extended with MoMoM proof object.
+The method returns a created import transaction in hex. This string should be passed into the `migrate_completeimporttransaction` method on the main KMD chain to be extended with MoMoM proof object.
+For MoMoM backup solution (see later) the created import transaction is not passed to `migrate_completeimporttransaction` method.
 
 ### Arguments:
 
@@ -98,9 +99,9 @@ Structure|Type|Description
 ---------|----|-----------
 "burntx"                                 |(string, required)         |burn transaction in hex created on the previous step
 "payouts"                                |(string, required)         |payouts object in hex created on the previous step and used for creating an import transaction
-"notarytxid-1"                             |(string, optional)         |notary approval transaction id 1, passed if MoMoM backp notarization solution is used
+"notaryTxid-1"                             |(string, optional)         |notary approval transaction id 1, passed if MoMoM backp notarization solution is used
 ...
-"notarytxid-N"                             |(string, optional)         |notary approval transaction id N, passed if MoMoM backp notarization solution is used
+"notaryTxid-N"                             |(string, optional)         |notary approval transaction id N, passed if MoMoM backp notarization solution is used
 
 ### Response:
 Structure|Type|Description
