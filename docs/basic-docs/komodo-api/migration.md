@@ -264,6 +264,22 @@ Structure|Type|Description
 "NotarizationHash"                 |(string)           |the first found notarization transaction id for the chain
 "MoMoM"                            |(string)           |MoMoM value
 
+## assetchainproof
+
+**assetchainproof txid**
+
+For given transaction id scans back notarizations and returns a proof object with MoM branch.
+
+### Arguments:
+
+Structure|Type|Description
+---------|----|-----------
+"txid"                                   |(string, required)         |transaction id for which a proof object is returned 
+
+### Response:
+
+for a txid returns a proof object with MoM branch in hex.
+
 
 ## getNotarisationsForBlock
 
@@ -279,7 +295,7 @@ Structure|Type|Description
 
 ### Response:
 
-returns array of <notarization txid> <notarization data in hex>
+returns array of pairs of values <notarization txid> <notarization data in hex>
    
 ## scanNotarisationsDB
 
