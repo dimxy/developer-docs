@@ -176,7 +176,7 @@ Returned notary transaction should be sent to the destination chain with `sendra
 Structure|Type|Description
 ---------|----|-----------
 "burntxid"                                   |(string, required)           |the burn transaction id
-"txoutproof"                                   |(string, required)           |the burn transaction id
+"txoutproof"                                 |(string, required)           |the proof of the burn transaction existence 
 
 
 ### Response:
