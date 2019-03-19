@@ -26,8 +26,7 @@ The workflow of the MoMoM value migration is following:
 - On the source chain the user runs migrate_createimportransaction and passes to it the burn transaction and 'payouts' object in hex format 
 which user received from the previous call
 - On the main Komodo (KMD) chain the user calls migrate_completeimpottransaction where the user passes the import transaction in hex format which was received from the previous call. On this stage the proof object for the burn transaction inside the import transaction 
-is extended with MoMoM data. This allows to check the burn transaction on the destination chain by using standard Komodo notarization process
-without the need to create proof objects additionally
+is extended with MoMoM data. This allows to check the burn transaction on the destination chain by using standard Komodo notarization process without the need to create proof objects additionally.
 
 ## migrate_createburntransaction
 
@@ -35,8 +34,8 @@ without the need to create proof objects additionally
 
 The `migrate_createburntransaction` method creates a transaction burning some amount of coins or tokens. The methods also creates payouts object used for creating an import transaction for the burned amount of value. This method should be called on the source chain.
 The method returns a created burn transaction which should be send to the source chain with `sendrawtransaction` method.
-After the burn transaction successfully mined you would need to wait for some time for back notarization with MoMoM fingerprints for the mined block with teh burn transaction would come to the chain.
-The other returned value `payouts` should be passed to the next method `migrate_createimporttransaction`.
+After the burn transaction successfully mined it might be needed to wait for some time for the back notarization with MoMoM fingerprints of the mined block with the burn transaction to reach the source chain.
+The hex value of the burn transaction along with the other returned value `payouts` should be passed to the next method `migrate_createimporttransaction`.
 
 ### Arguments:
 
@@ -81,6 +80,9 @@ Structure|Type|Description
 "payouts"                                  |(string)                     |a hex string of the created payouts (to be passed into migrate_createimporttransaction rpc method later)
 "exportTx"                                 |(string)                     |a hex string of the returned burn transaction
 
+## Burn transaction size consideration
+Because the burn transaction is stored in import transaction OP_RETURN vout which size is limited by 10,001 bytes it is recommended to limit the burn transaction size to the 30% of the OP_RETURN object.
+
 ## migrate_createimporttransaction
 
 **migrate_createimporttransaction burntx payouts**
@@ -109,7 +111,7 @@ Or errors may be returned. In case of errors it might be necessary to wait for s
 The `migrate_completeimporttransaction` method performs the finalizing step in creating an import transaction. This method should be called on the KMD chain.
 The method returns the import transaction in hex updated with MoMoM proof object which would confirm that the burn transaction exists in the source chain. 
 This value of finalized import transaction may be passed to `sendrawtransaction` rpc on the destination chain.
-Note: In case of errors while sending the import transaction it might be necessary to wait for some time before the notarizations objects are stored in the destination chain.
+In case of errors which may be returned while sending the import transaction it might be necessary to wait for some time before the notarizations objects are stored in the destination chain.
 
 ### Arguments:
 
@@ -122,9 +124,12 @@ Structure|Type|Description
 Structure|Type|Description
 ---------|----|-----------
 "ImportTxHex"                           |(string)         |import transaction in hex extended with MoMoM proof of the burn tx
+
 Or errors may be returned. In case of errors it might be necessary to wait for some time before the notarizations objects are stored in the KMD chain.
 
-Or errors may be returned. In case of errors it might be necessary to wait for some time before the notarizations objects are stored in the destination chain.
+# Notarization backup solution
+There is an alternate method of notarizing burn transaction by the notary operators in case of MoMoM notarization fails or slow.
+For this the notary operators pick burn transactions sent to a special publishing resource, check them and return ids of transactions with burn transaction proof objects which are created in destination chains.
 
 
 
