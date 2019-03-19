@@ -1,6 +1,6 @@
 # Migration API
 
-Migration API allows to move coin or token value between chains.
+Migration API allows to move coin or token value between chains (or in the same chain).
 The principle of migration assumes that some amount of coins or tokens is burned in the source chain and then exactly the same amount 
 is created in the destination chain   
 There are several ways of value migration in Komodo platform:
@@ -185,5 +185,31 @@ Structure|Type|Description
 ---------|----|-----------
 "NotaryTxHex"                             |(string)                     |notary approval transaction in hex
 
+# Self import API
+
+Self import API allows to a trusted pubkey to create more coins in the same chain.
+Requerement: the chain should have command line parameters `-ac_import=PUBLIC` and `-ac_pubkey` set to a pubkey which is allowed to create coins.
+For creating more coins in the chain with -ac_import=PUBKEY enabled there is an rpc method `selfimport`.
+The method return a source transaction that contains a parameter with amount of coins to create and is a proof of the trusted pubkey owner's intention to create coins in the chain.
+The returned source transaction should be sent into the chain with the `sendrawtransaction` method.
+Then, after the source transaction is mined, the import transactions also should be sent to the chain with the `sendrawtransaction` method. After it is mined, its vout would contain the amount of created coins on the appointed destination address.
 
 
+## selfimport
+
+**selfimport destAddress amount**
+
+### Arguments:
+
+Structure|Type|Description
+---------|----|-----------
+"destAddress"                            |(string, required)           |address where created coins should be sent
+"amount"                                 |(number, required)           |amount in coin to create
+
+
+### Response:
+
+Structure|Type|Description
+---------|----|-----------
+"SourceTxHex"                             |(string)                     |source transaction in hex
+"ImportTxHex"                             |(string)                     |import transaction in hex
