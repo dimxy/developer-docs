@@ -98,6 +98,9 @@ Structure|Type|Description
 ---------|----|-----------
 "burntx"                                 |(string, required)         |burn transaction in hex created on the previous step
 "payouts"                                |(string, required)         |payouts object in hex created on the previous step and used for creating an import transaction
+"notarytxid-1"                             |(string, optional)         |notary approval transaction id 1, passed if MoMoM backp notarization solution is used
+...
+"notarytxid-N"                             |(string, optional)         |notary approval transaction id N, passed if MoMoM backp notarization solution is used
 
 ### Response:
 Structure|Type|Description
@@ -119,8 +122,8 @@ In case of errors which may be returned while sending the import transaction it 
 
 Structure|Type|Description
 ---------|----|-----------
-"burntx"                                |(string, required)         |burn transaction in hex created on the previous step
-"payout"                                |(string, required)         |payouts object in hex created on the previous step and used for creating an import transaction
+"importtx"                              |(string, required)         |burn transaction in hex created on the previous step
+"offset"                                |(string, optional)         |offset of the current kmd blockchain height to search for a MoMoM
 
 ### Response:
 Structure|Type|Description
@@ -129,10 +132,58 @@ Structure|Type|Description
 
 Or errors may be returned. In case of errors it might be necessary to wait for some time before the notarizations objects are stored in the KMD chain.
 
-# Notarization backup solution
-There is an alternate method of notarizing burn transaction by the notary operators in case of MoMoM notarization fails or slow.
-For this the notary operators pick burn transactions sent to a special publishing resource, check them and return ids of transactions with burn transaction proof objects which are created in destination chains.
 
+
+# Notarization backup solution
+There is an alternate solution for notarizing burn transaction by the notary operators in case of MoMoM notarization fails or slow.
+For this the notary operators pick burn transactions sent to a special publishing resource, check them and return ids of transactions with burn transaction proof objects which are created in destination chains.
+The worflow:
+- A user creates a burn transaction with the above stated `migrate_createburntransaction` rpc method and publishes its hexademical representation to a publishing resource which is monitored by the notary operators (currently the discord channel ...) 
+- The notary operators pick the burn transaction and check its structure and existence in the source chain with the rpc method `migrate_checkburntransactionsource`. If the burn transaction is successfully validated, the notary operators create approval transactions in the destination chain and publish their transaction ids back into the publishing resource.
+- The user collects the transaction ids and calls `migrate_createimporttransaction` method, passing into it the collected notary approval transaction ids. Currently it is enough to have at least 5 successful notary approval transactions for an import transaction to be considered as valid in the destination chain.
+
+## migrate_checkburntransactionsource
+
+**migrate_checkburntransactionsource burntx**
+
+The `migrate_checkburntransactionsource` method allows to a notary operator to check the burn transaction structure and verify its presence in the source chain.
+
+### Arguments:
+
+Structure|Type|Description
+---------|----|-----------
+"burntx"                                   |(string, required)           |the burn transaction in hex
+
+### Response:
+
+Structure|Type|Description
+---------|----|-----------
+"sourceSymbol"                             |(string)                     |source chain name
+"targetSymbol"                             |(string)                     |target chain name
+"targetCCid"                               |(number)                     |target chain CCid 
+"tokenid"                                  |(string, optional)           |token id if it is token to migrate
+"TxOutProof"                               |(string)                     |proof of burn transaction existence in the source chain  
+
+## migrate_createnotaryapprovaltransaction
+
+**migrate_createnotaryapprovaltransaction burntxid txoutproof**
+
+A notary operator uses the `migrate_createnotaryapprovaltransaction` method to create an approval transaction in the destination chain with the proof of the burn transaction existence in the source chain.
+Returned notary transaction should be sent to the destination chain with `sendrawtransaction` method
+
+### Arguments:
+
+Structure|Type|Description
+---------|----|-----------
+"burntxid"                                   |(string, required)           |the burn transaction id
+"txoutproof"                                   |(string, required)           |the burn transaction id
+
+
+### Response:
+
+Structure|Type|Description
+---------|----|-----------
+"NotaryTxHex"                             |(string)                     |notary approval transaction in hex
 
 
 
