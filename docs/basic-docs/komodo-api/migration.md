@@ -1,6 +1,6 @@
 # Migration API
 
-Migration API allows to move coin or token value between chains or even within the same chain.
+Migration API allows to move coin or token value between chains.
 The principle of migration assumes that some amount of coins or tokens is burned in the source chain and then exactly the same amount 
 is created in the destination chain   
 There are several ways of value migration in Komodo platform:
@@ -13,6 +13,8 @@ which is created in the source chain but is sent to the destination chain. Komod
 there exists a corresponding burn transaction and that it is not spent more than once.
 
 The following migration RPC calls interact with the `komodod` software, and are made available through the `komodo-cli` software.
+
+Requerement: the source and destination chains should have the equal CCid parameter and it should be greater than 100 (which means that chains are fungible).
 
 # MoMoM notarized migration  
 
