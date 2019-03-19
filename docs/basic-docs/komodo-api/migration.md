@@ -5,8 +5,8 @@ The principle of migration assumes that some amount of coins or tokens is burned
 is created in the destination chain   
 There are several ways of value migration in Komodo platform:
 - MoMoM notarized migration
-- migration with manual notarization 
-- selfimport migration.
+- alternative migration method with notarization of the given burn transaction by notary operators (MoMoM backup solution) 
+- selfimport.
 
 The migration process consists of making an export or burn transaction in the source chain and making an import transaction for the burned value 
 which is created in the source chain but is sent to the destination chain. Komodo validation code checks that for the import transaction 
