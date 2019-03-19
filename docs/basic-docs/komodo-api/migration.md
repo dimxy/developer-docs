@@ -251,7 +251,7 @@ Structure|Type|Description
 ---------|----|-----------
 "symbol"                                   |(string, required)         |chain name for which data MoMoM value is calculated 
 "kmdheight"                                |(number, required)         |number of blocks to include in MoM calculation
-"ccid"                                     |(number)                   |chain ccid
+"ccid"                                     |(number, required)         |chain ccid
 
 ### Response:
 
@@ -265,10 +265,48 @@ Structure|Type|Description
 "MoMoM"                            |(string)           |MoMoM value
 
 
+## getNotarisationsForBlock
+
+**getNotarisationsForBlock blockHash**
+
+For the block hash returns notarisation transactions within the block.
+
+### Arguments:
+
+Structure|Type|Description
+---------|----|-----------
+"blockHash"                                   |(string, required)         |block hash where notarizations are searched 
+
+### Response:
+
+returns array of <notarization txid> <notarization data in hex>
+   
+## scanNotarisationsDB
+
+**scanNotarisationsDB blockHeight symbol [blocksLimit=1440]**
+
+Scans notarisations db backwards from height for a notarisation of given symbol.
+
+### Arguments:
+
+Structure|Type|Description
+---------|----|-----------
+"blockHeight"                       |(number, required)         |starting block height where notarizations are searched 
+"symbol"                            |(string, required)         |chain name for which notarizations are searched 
+"blocksLimit"                       |(number, optional)         |optional block number to search for notarizations in depth
+
+
+
+### Response:
+
+returns array of <notarization txid> <notarization data in hex>
+   
 
 # User API
 
 There are some utility methods for getting information about burn transactions or import transactions existing in a chain. 
+
+## getimports
 
 **getimports hash|height**
 
@@ -295,6 +333,7 @@ Structure|Type|Description
    "tokenid"                        |(string,optional)            |source chain token id, if tokens are imported
 "TotalImported"                     |(number)                     |total imported amount in coins
 
+## getwalletburntransaction
 
 **getwalletburntransactions**
 
