@@ -227,7 +227,7 @@ The `getimports` lists import transactions in the chain's block appointed by a b
 
 Structure|Type|Description
 ---------|----|-----------
-"hash|height"                                   |(string|number, required)           |block hash or height to search import transactions in
+"hash or height"                                   |(string or number, required)           |block's hash or height to search import transactions in
 
 ### Response:
 
@@ -243,3 +243,22 @@ Structure|Type|Description
    "source"                         |(string)                     |source chain name
    "tokenid"                        |(string,optional)            |source chain token id, if tokens are imported
 "TotalImported"                     |(number)                     |total imported amount in coins
+
+
+**getwalletburntransactions**
+
+The `getwalletburntransactions` lists burn transactions in the current wallet.
+
+### Arguments:
+
+none
+
+### Response:
+
+Structure|Type|Description
+---------|----|-----------
+"txid"                              |(string)                     |burn transaction id
+"burnedAmount"                      |(number)                     |burned value in coins
+"tokenid"                           |(string, optional)           |token id, if tokens are burned
+"targetSymbol"                      |(string)                     |target chain name
+"targetCCid"                        |(number)                     |target chain CCid 
