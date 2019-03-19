@@ -55,7 +55,7 @@ Structure|Type|Description
 "payouts"                                  |(string)                     |a hex string of the created payouts (to be passed into migrate_createimporttransaction rpc method later)
 "BurnTxHex"                                |(string)                     |a hex string of the created burn transaction
 
-## An alternate method of creating a customized burn transaction
+## An alternative method of creating a customized burn transaction
 If it is needed to create a customized burn transaction there is an additional rpc method `migrate_converttoexport` which converts passed transaction to a burn transaction. It adds proof data to the passed transaction and extracts the transaction vouts and calculates and burns their amount by sending it to an OP_RETURN vout which is added to the transaction. 
 It is responsibility of the caller to fund and sign the returned burn transaction with rpc methos `fundrawtransaction` and `signrawtransaction`.
 The signed burn transaction should be sent to the destination chain by the `sendrawtansaction` method.
@@ -214,10 +214,61 @@ Structure|Type|Description
 "SourceTxHex"                             |(string)                     |source transaction in hex
 "ImportTxHex"                             |(string)                     |import transaction in hex
 
-# Utility API
+# Notary API
+Several methods are used by notary nodes to get block chain 'fingerprints' and notarization data from chain.
+
+## calc_MoM
+
+**calc_MoM height MoMdepth**
+
+The `calc_MoM` method calculates merkle root of blocks' merkle roots (MoM) value starting from the block of the appointed height for the passed depth. This method should be run on an asset chain.
+
+### Arguments:
+
+Structure|Type|Description
+---------|----|-----------
+"height"                                   |(number, required)           |block height from which MoM calculation begins
+"MoMdepth"                                 |(number, required)         |number of blocks to include in MoM calculation
+
+### Response:
+
+Structure|Type|Description
+---------|----|-----------
+"coin"                             |(string)           |chain name
+"height"                           |(string)           |starting block height
+"MoMdepth"                         |(number)           |number of blocks to include in MoM calculation 
+"MoM"                              |(string)           |MoM value
+
+## MoMoMdata
+
+**MoMoMdata symbol kmdheight ccid**
+
+The `MoMoMdata` method calculates merkle root of merkle roots of blocks' merkle roots (MoMoM) value starting from the block of the appointed height for the data of the chain with passed name and ccid. The method should be run on the KMD chain.
+
+### Arguments:
+
+Structure|Type|Description
+---------|----|-----------
+"symbol"                                   |(string, required)         |chain name for which data MoMoM value is calculated 
+"kmdheight"                                |(number, required)         |number of blocks to include in MoM calculation
+"ccid"                                     |(number)                   |chain ccid
+
+### Response:
+
+Structure|Type|Description
+---------|----|-----------
+"coin"                             |(string)           |chain name
+"kmdheight"                        |(string)           |starting block height
+"ccid"                             |(number)           |chain ccid
+"MoMs"                             |(string)           |array of MoM values
+"NotarizationHash"                 |(string)           |the first found notarization transaction id for the chain
+"MoMoM"                            |(string)           |MoMoM value
+
+
+
+# User API
 
 There are some utility methods for getting information about burn transactions or import transactions existing in a chain. 
-
 
 **getimports hash|height**
 
