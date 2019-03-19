@@ -87,7 +87,7 @@ Because the burn transaction is stored in import transaction OP_RETURN vout whic
 
 ## migrate_createimporttransaction
 
-**migrate_createimporttransaction burntx payouts [notaryTxid-1]...[notaryTxid-N]**
+**migrate_createimporttransaction burntx payouts [notaryTxid1]...[notaryTxidN]**
 
 The `migrate_createimporttransaction` method performs a initial step in creating an import transaction. This method should be called on the source chain.
 The method returns a created import transaction in hex. This string should be passed into the `migrate_completeimporttransaction` method on the main KMD chain to be extended with MoMoM proof object.
@@ -99,9 +99,9 @@ Structure|Type|Description
 ---------|----|-----------
 "burntx"                                 |(string, required)         |burn transaction in hex created on the previous step
 "payouts"                                |(string, required)         |payouts object in hex created on the previous step and used for creating an import transaction
-"notaryTxid-1"                             |(string, optional)         |notary approval transaction id 1, passed if MoMoM backp notarization solution is used
+"notaryTxid1"                             |(string, optional)         |notary approval transaction id 1, passed if MoMoM backup solution is used for notarization
 ...
-"notaryTxid-N"                             |(string, optional)         |notary approval transaction id N, passed if MoMoM backp notarization solution is used
+"notaryTxidN"                             |(string, optional)         |notary approval transaction id N, passed if MoMoM backup solution is used for notarization
 
 ### Response:
 Structure|Type|Description
@@ -189,7 +189,7 @@ Structure|Type|Description
 # Self import API
 
 Self import API allows to a trusted pubkey to create more coins in the same chain.
-Requerement: the chain should have command line parameters `-ac_import=PUBLIC` and `-ac_pubkey` set to a pubkey which is allowed to create coins.
+Requirement: the chain should have command line parameters `-ac_import=PUBLIC` and `-ac_pubkey` set to a pubkey which is allowed to create coins.
 For creating more coins in the chain with -ac_import=PUBKEY enabled there is an rpc method `selfimport`.
 The method return a source transaction that contains a parameter with amount of coins to create and is a proof of the trusted pubkey owner's intention to create coins in the chain.
 The returned source transaction should be sent into the chain with the `sendrawtransaction` method. The source transaction spends txfee=10000 satoshis amount from the ac_pubkey owner UXTOs.
