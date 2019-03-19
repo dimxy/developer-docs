@@ -51,33 +51,64 @@ Structure|Type|Description
 
 Structure|Type|Description
 ---------|----|-----------
-"hex"                                |(string)                     |a hex string of the created burn transaction
-"payouts"                            |(string)                     |a hex string of the created payouts (to be passed into migrate_createimporttransaction rpc method later)
+"payouts"                                  |(string)                     |a hex string of the created payouts (to be passed into migrate_createimporttransaction rpc method later)
+"BurnTxHex"                                |(string)                     |a hex string of the created burn transaction
+
+## Alternate method of creating customized burn transaction
+If it is needed to create a customized burn transaction there is an additional rpc method `migrate_converttoexport` which converts passed transaction to a burn transaction. It adds proof data to the passed transaction and extracts the transaction vouts and calculates and burns their amount by sending it to an OP_RETURN vout which is added to the transaction. 
+It is responsibility of the caller to fund and sign the returned burn transaction with rpc methos `fundrawtransaction` and `signrawtransaction`.
+The signed burn transaction should be sent to the destination chain by the `sendrawtansaction` method.
+Note: this method supports only coins (tokens are not supported).
+
+## migrate_converttoexport
+
+**migrate_converttoexport burntx**
+
+The `migrate_converttoexport` method adds OP_RETURN object to the passed transaction.
+The other returned value `payouts` should be passed to the next method `migrate_createimporttransaction`.
+
+### Arguments:
+
+Structure|Type|Description
+---------|----|-----------
+"burntx"                                  |(string, required)           |the burn transaction in hex
+"destChain"                                |(string, required)           |the destination chain name
+
+### Response:
+
+Structure|Type|Description
+---------|----|-----------
+"payouts"                                  |(string)                     |a hex string of the created payouts (to be passed into migrate_createimporttransaction rpc method later)
+"exportTx"                                |(string)                     |a hex string of the returned burn transaction
 
 ## migrate_createimporttransaction
 
 **migrate_createimporttransaction burntx payouts**
 
-The `migrate_createimporttransaction` method performs a initial step in creating an import transaction . This method should be called on the source chain.
-The method returns a created import transaction in hex. This value should be passed into the migrate_completeimporttransaction method on the main KMD chain to be extended with MoMoM proof object
+The `migrate_createimporttransaction` method performs a initial step in creating an import transaction. This method should be called on the source chain.
+The method returns a created import transaction in hex. This string should be passed into the migrate_completeimporttransaction method on the main KMD chain to be extended with MoMoM proof object.
 
 ### Arguments:
 
 Structure|Type|Description
 ---------|----|-----------
-"burntx"                                |(string, required)         |burn transaction in hex created on the previous step
-"payout"                                |(string, required)         |payouts object in hex created on the previous step and used for creating an import transaction
+"burntx"                                 |(string, required)         |burn transaction in hex created on the previous step
+"payouts"                                |(string, required)         |payouts object in hex created on the previous step and used for creating an import transaction
 
 ### Response:
-
-a hex string of the created import transaction
+Structure|Type|Description
+---------|----|-----------
+"ImportTxHex"                           |(string)         |a hex string of the created import transaction
+Or errors may be returned. In case of errors it might be necessary to wait for some time before the back notarizations objects are sent in the destination chain.
 
 ## migrate_completeimporttransaction
 
 **migrate_completeimporttransaction importtx**
 
-The `migrate_createimporttransaction` method performs a initial step in creating an import transaction . This method should be called on the source chain.
-The method returns a created import transaction in hex. This value should be passed into the migrate_completeimporttransaction method on the main KMD chain to be extended with MoMoM proof object
+The `migrate_completeimporttransaction` method performs the finalizing step in creating an import transaction. This method should be called on the KMD chain.
+The method returns the import transaction in hex updated with MoMoM proof object which would confirm that the burn transaction exists in the source chain. 
+This value of finalized import transaction may be passed to `sendrawtransaction` rpc on the destination chain.
+Note: In case of errors while sending the import transaction it might be necessary to wait for some time before the notarizations objects are stored in the destination chain.
 
 ### Arguments:
 
@@ -87,8 +118,13 @@ Structure|Type|Description
 "payout"                                |(string, required)         |payouts object in hex created on the previous step and used for creating an import transaction
 
 ### Response:
+Structure|Type|Description
+---------|----|-----------
+"ImportTxHex"                           |(string)         |import transaction in hex extended with MoMoM proof of the burn tx
+Or errors may be returned. In case of errors it might be necessary to wait for some time before the notarizations objects are stored in the KMD chain.
 
-a hex string of the created import transaction
+Or errors may be returned. In case of errors it might be necessary to wait for some time before the notarizations objects are stored in the destination chain.
+
 
 
 
