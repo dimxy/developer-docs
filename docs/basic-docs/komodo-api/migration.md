@@ -54,7 +54,7 @@ Structure|Type|Description
 "payouts"                                  |(string)                     |a hex string of the created payouts (to be passed into migrate_createimporttransaction rpc method later)
 "BurnTxHex"                                |(string)                     |a hex string of the created burn transaction
 
-## Alternate method of creating customized burn transaction
+## An alternate method of creating a customized burn transaction
 If it is needed to create a customized burn transaction there is an additional rpc method `migrate_converttoexport` which converts passed transaction to a burn transaction. It adds proof data to the passed transaction and extracts the transaction vouts and calculates and burns their amount by sending it to an OP_RETURN vout which is added to the transaction. 
 It is responsibility of the caller to fund and sign the returned burn transaction with rpc methos `fundrawtransaction` and `signrawtransaction`.
 The signed burn transaction should be sent to the destination chain by the `sendrawtansaction` method.
@@ -79,7 +79,7 @@ Structure|Type|Description
 Structure|Type|Description
 ---------|----|-----------
 "payouts"                                  |(string)                     |a hex string of the created payouts (to be passed into migrate_createimporttransaction rpc method later)
-"exportTx"                                |(string)                     |a hex string of the returned burn transaction
+"exportTx"                                 |(string)                     |a hex string of the returned burn transaction
 
 ## migrate_createimporttransaction
 
@@ -99,6 +99,7 @@ Structure|Type|Description
 Structure|Type|Description
 ---------|----|-----------
 "ImportTxHex"                           |(string)         |a hex string of the created import transaction
+
 Or errors may be returned. In case of errors it might be necessary to wait for some time before the back notarizations objects are sent in the destination chain.
 
 ## migrate_completeimporttransaction
