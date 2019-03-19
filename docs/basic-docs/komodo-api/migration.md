@@ -1,6 +1,6 @@
-# Migration API
+# Crosschain (Migration) API
 
-Migration API allows to move coin or token value between chains (or in the same chain).
+Crosschain (Migration) API allows to move coin or token value between chains (or in the same chain).
 The principle of migration assumes that some amount of coins or tokens is burned in the source chain and then exactly the same amount 
 is created in the destination chain   
 There are several ways of value migration in Komodo platform:
