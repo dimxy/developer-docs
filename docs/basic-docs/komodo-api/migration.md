@@ -8,7 +8,7 @@ There are several ways of value migration in Komodo platform:
 - migration with manual notarization 
 - selfimport migration.
 
-The migration process consists of making a burn transaction in the source chain and making an import transaction for the burned value 
+The migration process consists of making an export or burn transaction in the source chain and making an import transaction for the burned value 
 which is created in the source chain but is sent to the destination chain. Komodo validation code checks that for the import transaction 
 there exists a corresponding burn transaction and that it is not spent more than once.
 
@@ -138,7 +138,7 @@ Or errors may be returned. In case of errors it might be necessary to wait for s
 There is an alternate solution for notarizing burn transaction by the notary operators in case of MoMoM notarization fails or slow.
 For this the notary operators pick burn transactions sent to a special publishing resource, check them and return ids of transactions with burn transaction proof objects which are created in destination chains.
 The worflow:
-- A user creates a burn transaction with the above stated `migrate_createburntransaction` rpc method and publishes its hexademical representation to a publishing resource which is monitored by the notary operators (currently the discord channel ...) 
+- A user creates a burn transaction with the above stated `migrate_createburntransaction` rpc method and publishes its hexademical representation to a publishing resource which is monitored by the notary operators (currently the discord channel ...???) 
 - The notary operators pick the burn transaction and check its structure and existence in the source chain with the rpc method `migrate_checkburntransactionsource`. If the burn transaction is successfully validated, the notary operators create approval transactions in the destination chain and publish their transaction ids back into the publishing resource.
 - The user collects the transaction ids and calls `migrate_createimporttransaction` method, passing into it the collected notary approval transaction ids. Currently it is enough to have at least 5 successful notary approval transactions for an import transaction to be considered as valid in the destination chain.
 
@@ -191,7 +191,7 @@ Self import API allows to a trusted pubkey to create more coins in the same chai
 Requerement: the chain should have command line parameters `-ac_import=PUBLIC` and `-ac_pubkey` set to a pubkey which is allowed to create coins.
 For creating more coins in the chain with -ac_import=PUBKEY enabled there is an rpc method `selfimport`.
 The method return a source transaction that contains a parameter with amount of coins to create and is a proof of the trusted pubkey owner's intention to create coins in the chain.
-The returned source transaction should be sent into the chain with the `sendrawtransaction` method.
+The returned source transaction should be sent into the chain with the `sendrawtransaction` method. The source transaction spends txfee=10000 satoshis amount from the ac_pubkey owner UXTOs.
 Then, after the source transaction is mined, the import transactions also should be sent to the chain with the `sendrawtransaction` method. After it is mined, its vout would contain the amount of created coins on the appointed destination address.
 
 
@@ -204,7 +204,7 @@ Then, after the source transaction is mined, the import transactions also should
 Structure|Type|Description
 ---------|----|-----------
 "destAddress"                            |(string, required)           |address where created coins should be sent
-"amount"                                 |(number, required)           |amount in coin to create
+"amount"                                 |(number, required)           |amount in coins to create
 
 
 ### Response:
@@ -213,3 +213,33 @@ Structure|Type|Description
 ---------|----|-----------
 "SourceTxHex"                             |(string)                     |source transaction in hex
 "ImportTxHex"                             |(string)                     |import transaction in hex
+
+# Utility API
+
+There are some utility methods for getting information about burn transactions or import transactions existing in a chain. 
+
+
+**getimports hash|height**
+
+The `getimports` lists import transactions in the chain's block appointed by a block number or block hash parameter.
+
+### Arguments:
+
+Structure|Type|Description
+---------|----|-----------
+"hash|height"                                   |(string|number, required)           |block hash or height to search import transactions in
+
+### Response:
+
+Structure|Type|Description
+---------|----|-----------
+"transaction id"                    |(string)                     |import transaction id
+"amount"                            |(number)                     |import transaction value in coins
+"address"                           |(string)                     |destination address
+"export:"                           |                             |export or burn transaction infomation
+   "txid"                           |(string)                     |export transaction id
+   "amount"                         |(number)                     |export transaction value
+   "txid"                           |(string)                     |export transaction id
+   "source"                         |(string)                     |source chain name
+   "tokenid"                        |(string,optional)            |source chain token id, if tokens are imported
+"TotalImported"                     |(number)                     |total imported amount in coins
