@@ -4,8 +4,8 @@ Crosschain (Migration) API allows to move coin or token value between chains (or
 The principle of migration assumes that some amount of coins or tokens is burned in the source chain and then exactly the same amount 
 is created in the destination chain   
 There are several ways of value migration in Komodo platform:
-- MoMoM notarized migration
-- alternative migration method with notarization of the given burn transaction by notary operators (MoMoM backup solution) 
+- MoMoM notarised migration
+- alternative migration method with notarisation of the given burn transaction by notary operators (MoMoM backup solution) 
 - selfimport.
 
 The migration process consists of making an export or burn transaction in the source chain and making an import transaction for the burned value 
@@ -16,19 +16,19 @@ The following migration RPC calls interact with the `komodod` software, and are 
 
 Requerement: the source and destination chains should have the equal CCid parameter and it should be greater than 100 (which means that chains are fungible).
 
-# MoMoM notarized migration  
+# MoMoM notarised migration  
 
-MoMoM notarized migration API allows the migration of coin or token value based on Komodo's highly scalable notarization process when 
+MoMoM notarised migration API allows the migration of coin or token value based on Komodo's highly scalable notarisation process when 
 elected and trusted notary nodes store fingeprints (what is called MoM, merkle root of merkle roots) of assets blockchains' blocks 
-in the main komodo chain and after that, fingerprints of fingerprints (what is called MoMoM, 'merkle root of merkle roots of merkle roots') are delivered back into the assets chain (as back notarizations)
-(more about the notarization process is here: https://komodoplatform.com/komodo-platforms-new-scalability-tech/).
+in the main komodo chain and after that, fingerprints of fingerprints (what is called MoMoM, 'merkle root of merkle roots of merkle roots') are delivered back into the assets chain (as back notarisations)
+(more about the notarisation process is here: https://komodoplatform.com/komodo-platforms-new-scalability-tech/).
 
 The workflow of the MoMoM value migration is following:
 - On the source chain user calls migrate_createburntransaction rpc and sends the burn transaction by sendrawtransaction call
 - On the source chain the user runs migrate_createimportransaction and passes to it the burn transaction and 'payouts' object in hex format 
 which user received from the previous call
 - On the main Komodo (KMD) chain the user calls migrate_completeimpottransaction where the user passes the import transaction in hex format which was received from the previous call. On this stage the proof object for the burn transaction inside the import transaction 
-is extended with MoMoM data. This allows to check the burn transaction on the destination chain by using standard Komodo notarization process without the need to create proof objects additionally.
+is extended with MoMoM data. This allows to check the burn transaction on the destination chain by using standard Komodo notarisation process without the need to create proof objects additionally.
 
 ## migrate_createburntransaction
 
@@ -36,7 +36,7 @@ is extended with MoMoM data. This allows to check the burn transaction on the de
 
 The `migrate_createburntransaction` method creates a transaction burning some amount of coins or tokens. The methods also creates payouts object used for creating an import transaction for the burned amount of value. This method should be called on the source chain.
 The method returns a created burn transaction which should be send to the source chain with `sendrawtransaction` method.
-After the burn transaction successfully mined it might be needed to wait for some time for the back notarization with MoMoM fingerprints of the mined block with the burn transaction to reach the source chain.
+After the burn transaction successfully mined it might be needed to wait for some time for the back notarisation with MoMoM fingerprints of the mined block with the burn transaction to reach the source chain.
 The hex value of the burn transaction along with the other returned value `payouts` should be passed to the next method `migrate_createimporttransaction`.
 
 ### Arguments:
@@ -99,16 +99,16 @@ Structure|Type|Description
 ---------|----|-----------
 "burntx"                                 |(string, required)         |burn transaction in hex created on the previous step
 "payouts"                                |(string, required)         |payouts object in hex created on the previous step and used for creating an import transaction
-"notaryTxid1"                             |(string, optional)         |notary approval transaction id 1, passed if MoMoM backup solution is used for notarization
+"notaryTxid1"                             |(string, optional)         |notary approval transaction id 1, passed if MoMoM backup solution is used for notarisation
 ...
-"notaryTxidN"                             |(string, optional)         |notary approval transaction id N, passed if MoMoM backup solution is used for notarization
+"notaryTxidN"                             |(string, optional)         |notary approval transaction id N, passed if MoMoM backup solution is used for notarisation
 
 ### Response:
 Structure|Type|Description
 ---------|----|-----------
 "ImportTxHex"                           |(string)         |a hex string of the created import transaction
 
-Or errors may be returned. In case of errors it might be necessary to wait for some time before the back notarizations objects are sent in the destination chain.
+Or errors may be returned. In case of errors it might be necessary to wait for some time before the back notarisations objects are sent in the destination chain.
 
 ## migrate_completeimporttransaction
 
@@ -117,7 +117,7 @@ Or errors may be returned. In case of errors it might be necessary to wait for s
 The `migrate_completeimporttransaction` method performs the finalizing step in creating an import transaction. This method should be called on the KMD chain.
 The method returns the import transaction in hex updated with MoMoM proof object which would confirm that the burn transaction exists in the source chain. 
 This value of finalized import transaction may be passed to `sendrawtransaction` rpc on the destination chain.
-In case of errors which may be returned while sending the import transaction it might be necessary to wait for some time before the notarizations objects are stored in the destination chain.
+In case of errors which may be returned while sending the import transaction it might be necessary to wait for some time before the notarisations objects are stored in the destination chain.
 
 ### Arguments:
 
@@ -131,12 +131,12 @@ Structure|Type|Description
 ---------|----|-----------
 "ImportTxHex"                           |(string)         |import transaction in hex extended with MoMoM proof of the burn tx
 
-Or errors may be returned. In case of errors it might be necessary to wait for some time before the notarizations objects are stored in the KMD chain.
+Or errors may be returned. In case of errors it might be necessary to wait for some time before the notarisations objects are stored in the KMD chain.
 
 
 
-# Notarization backup solution
-There is an alternate solution for notarizing burn transaction by the notary operators in case of MoMoM notarization fails or slow.
+# notarisation backup solution
+There is an alternate solution for notarising burn transaction by the notary operators in case of MoMoM notarisation fails or slow.
 For this the notary operators pick burn transactions sent to a special publishing resource, check them and return ids of transactions with burn transaction proof objects which are created in destination chains.
 The worflow:
 - A user creates a burn transaction with the above stated `migrate_createburntransaction` rpc method and publishes its hexademical representation to a publishing resource which is monitored by the notary operators (currently the discord channel ...???) 
@@ -216,7 +216,7 @@ Structure|Type|Description
 "ImportTxHex"                             |(string)                     |import transaction in hex
 
 # Notary API
-Several methods are used by notary nodes to get block chain 'fingerprints' and notarization data from chain.
+Several methods are used by notary nodes to get block chain 'fingerprints' and notarisation data from chain.
 
 ## calc_MoM
 
@@ -262,14 +262,15 @@ Structure|Type|Description
 "kmdheight"                        |(string)           |starting block height
 "ccid"                             |(number)           |chain ccid
 "MoMs"                             |(string)           |array of MoM values
-"NotarizationHash"                 |(string)           |the first found notarization transaction id for the chain
+"notarisationHash"                 |(string)           |the first found notarisation transaction id for the chain
 "MoMoM"                            |(string)           |MoMoM value
+
 
 ## assetchainproof
 
 **assetchainproof txid**
 
-For given transaction id scans back notarizations and returns a proof object with MoM branch.
+For given transaction id the `assetchainproof` method scans the chain for the back MoM notarisation for this transaction and returns a proof object with MoM branch. Scanning is performed from the height upto the chain tip but no more than 1440 blocks.
 
 ### Arguments:
 
@@ -292,31 +293,31 @@ For the block hash returns notarisation transactions within the block.
 
 Structure|Type|Description
 ---------|----|-----------
-"blockHash"                                   |(string, required)         |block hash where notarizations are searched 
+"blockHash"                                   |(string, required)         |block hash where notarisations are searched 
 
 ### Response:
 
-returns array of pairs of values <notarization txid> <notarization data in hex>
+returns array of pairs of values <notarisation txid> <notarisation data in hex>
    
 ## scanNotarisationsDB
 
 **scanNotarisationsDB blockHeight symbol [blocksLimit=1440]**
 
-Scans notarisations db backwards from height for a notarisation of given symbol.
+Scans notarisations db backwards from the block height for a notarisation of given symbol.
 
 ### Arguments:
 
 Structure|Type|Description
 ---------|----|-----------
-"blockHeight"                       |(number, required)         |starting block height where notarizations are searched 
-"symbol"                            |(string, required)         |chain name for which notarizations are searched 
-"blocksLimit"                       |(number, optional)         |optional block number to search for notarizations in depth
+"blockHeight"                       |(number, required)         |starting block height where notarisations are searched 
+"symbol"                            |(string, required)         |chain name for which notarisations are searched 
+"blocksLimit"                       |(number, optional)         |optional block number to search for notarisations in depth
 
 
 
 ### Response:
 
-returns array of <notarization txid> <notarization data in hex>
+returns array of <notarisation txid> <notarisation data in hex>
    
 
 # User API
