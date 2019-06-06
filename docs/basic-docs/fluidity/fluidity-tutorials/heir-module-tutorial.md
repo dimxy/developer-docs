@@ -1,4 +1,4 @@
-# Heir Module Tutorial <!-- dimxy: Heir Module Development Tutorial ? -->
+# Heir Module Tutorial <!-- dimxy: Heir Module Development Tutorial? -->
 
 This tutorial demonstrates the process of developing a new [<b>Antara module</b>](). In the tutorial, we build a simplified prototype of the existing [<b>Heir</b>](../basic-docs/fluidity/fluidity-api/heir.html) Antara module.
 
