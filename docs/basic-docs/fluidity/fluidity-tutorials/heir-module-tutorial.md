@@ -56,8 +56,9 @@ The basic concept to understand is that the Heir module allows the owner of a Sm
 
 In terms of design, this is a relatively straightforward Antara module, which is one reason we use it here.
 
-## Complete the Heir Module Flow Section (Optional) <!-- dimxy: this 2-level header looks like that it is prepended the following paragraphs. But it seems it is not. Maybe it should not be the 2-level header -->
+## Complete the Heir Module Flow Section (Optional) <!-- dimxy: this 2-level header looks like it is prepended the following text and paragraphs. But seems it is not. Maybe it should not be the 2-level header, but of the same level as 'Launch the Rick Smart Chain' header  -->
 
+<!-- dimxy maybe add a 2-level header like 'Learn how to work with Smart Chains' for the next 3 headers about faucet usage  -->  
 Before we begin the development process, it may be helpful to first experiment with the flow of RPC commands for the existing Heir module. 
 
 This section is optional, but recommended.
@@ -65,6 +66,7 @@ This section is optional, but recommended.
 #### Launch the RICK Smart Chain
 
 <!-- Note, only use one chain. If it's RICK, keep it RICK. -->
+<!-- dimxy maybe a paragraph like 'Setting Environment' is needed here -->  
 
 The community test chain, <b>RICK</b>, has the Heir module enabled and can serve our experiment purposes. Launch the chain as follows.
 
