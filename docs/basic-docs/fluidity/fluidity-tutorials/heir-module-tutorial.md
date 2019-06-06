@@ -1,4 +1,4 @@
-# Heir Module Tutorial
+# Heir Module Tutorial <!-- dimxy: Heir Module Development Tutorial ? -->
 
 This tutorial demonstrates the process of developing a new [<b>Antara module</b>](). In the tutorial, we build a simplified prototype of the existing [<b>Heir</b>](../basic-docs/fluidity/fluidity-api/heir.html) Antara module.
 
@@ -13,7 +13,8 @@ Furthermore, in the process of completing this tutorial the developer will learn
 Tutorial readers should have the following prerequisite experience. We provide links to relevant resources where available.
 
 <!-- This may be too many links. Perhaps simplify method of communicating prerequisite knowledge. -->
-<!-- dimxy yes, I suggest moving most of the links to the end of the document as additional info. The idea is not to make impression for a developer that he would need to learn too much first before starting developing antara contracts --> 
+<!-- dimxy yes, I suggest moving most of the links to the end of the document as additional info. The idea of this is not to make impression for a developer that he would need to learn too much first before starting developing antara modules --> 
+<!-- dimxy As we spoke on the voice call I'd like also to suggest making an additional simple and informal doc for absolute beginners which would explain most of concept of development in very simple terms without needing to read much before. Just engage into development and answer most of the questions right in the doc. Learn things by example -->
 
 - Confident programming skills with the C/C++ languages
 - Familiarity with the Komodo platform
@@ -39,13 +40,13 @@ Tutorial readers should have the following prerequisite experience. We provide l
 
 ### (temporary section) WIP Link from @dimxy
 
-https://github.com/dimxy/komodo/wiki/Developing-my-first-cryptocondition-contract-Heir <!-- dimxy So we need to remove this link. This content I moved to the link https://github.com/dimxy/doc-dev/blob/master/first-cc-heir.md which follows right after this. I did this because I wanted to use github merge features. Wiki pages do not allow this, so I moved the content.  -->
+https://github.com/dimxy/komodo/wiki/Developing-my-first-cryptocondition-contract-Heir <!-- dimxy So we need to remove this link. This content I moved to the link https://github.com/dimxy/doc-dev/blob/master/first-cc-heir.md which follows right after this. I did this because I wanted to use github merging features. Wiki pages do not allow this, so I moved the content to the github repo.  -->
 
 https://github.com/dimxy/doc-dev/blob/master/first-cc-heir.md  <!-- most of the content from this link is copied to the current tutorial below, so it might be better to also move this link at the end of the tutorial as additional info. --> 
 
-## A Conceptual Understanding of the Intended Product  <!-- dimxy maybe 'A Conceptual Understanding of a new Antara Module to be developed' -->
-<!-- dimxy: I suggest adding here a phrase giving reader an idea that he is going to develop a simplified version of existing Heir Module, like: 'In this tutorial you will develop asimplified version of the existing Antara Heir Module'  -->
-Read the introduction of the finished Heir Module API to gain a vision of what we are about to create. <!-- dimxy maybe do we need  'finished' here? -->
+## A Conceptual Understanding of the Intended Product  
+<!-- dimxy: I suggest adding here a phrase giving to the reader an idea that he is going to develop a simplified version of existing Heir Module, like: 'In this tutorial you will develop a simplified version of the existing Antara Heir Module'  -->
+Read the introduction of the finished Heir Module API to gain a vision of what we are about to create. <!-- dimxy do we need  'finished' here? -->
 
 (Read until the start of the section named <b>Heir Module Flow</b> and then pause.)
 
@@ -55,7 +56,7 @@ The basic concept to understand is that the Heir module allows the owner of a Sm
 
 In terms of design, this is a relatively straightforward Antara module, which is one reason we use it here.
 
-## Complete the Heir Module Flow Section (Optional)
+## Complete the Heir Module Flow Section (Optional) <!-- dimxy: this 2-level header looks like that it is prepended the following paragraphs. But it seems it is not. Maybe it should not be the 2-level header -->
 
 Before we begin the development process, it may be helpful to first experiment with the flow of RPC commands for the existing Heir module. 
 
