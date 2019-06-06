@@ -4,15 +4,16 @@ This tutorial demonstrates the process of developing a new [<b>Antara module</b>
 
 #### Tutorial Objectives
 
-The primary aim is to give the developer direct engagement with Antara module development, with a focus on the CryptoConditions aspects. This process will give the developer a better grasp of the broad potential of the Antara framework.
+The primary aim is to give the developer direct engagement with Antara module development, with a focus on the CryptoConditions aspects. This process will give the developer a better grasp of the broad potential of the Antara framework. <!-- dimxy why are we speaking of modules. Isn't 'contract' a more accurate term? Term 'module' is too broad, 'contract is more specific IMO -->
 
-Furthermore, in the process of completing this tutorial the developer will learn how the Antara code directories are organized.
+Furthermore, in the process of completing this tutorial the developer will learn how the Antara code directories are organized. <!-- dimxy: maybe not only code directories but also how all the source code organized -->
 
 ## Prerequisite Knowledge
 
 Tutorial readers should have the following prerequisite experience. We provide links to relevant resources where available.
 
 <!-- This may be too many links. Perhaps simplify method of communicating prerequisite knowledge. -->
+<!-- dimxy yes, I suggest moving most of the links to the end of the document as additional info. The idea is not to make impression for a developer that he would need to learn too much first before starting developing antara contracts --> 
 
 - Confident programming skills with the C/C++ languages
 - Familiarity with the Komodo platform
@@ -38,13 +39,13 @@ Tutorial readers should have the following prerequisite experience. We provide l
 
 ### (temporary section) WIP Link from @dimxy
 
-https://github.com/dimxy/komodo/wiki/Developing-my-first-cryptocondition-contract-Heir
+https://github.com/dimxy/komodo/wiki/Developing-my-first-cryptocondition-contract-Heir <!-- dimxy So we need to remove this link. This content I moved to the link https://github.com/dimxy/doc-dev/blob/master/first-cc-heir.md which follows right after this. I did this because I wanted to use github merge features. Wiki pages do not allow this, so I moved the content.  -->
 
-https://github.com/dimxy/doc-dev/blob/master/first-cc-heir.md
+https://github.com/dimxy/doc-dev/blob/master/first-cc-heir.md  <!-- most of the content from this link is copied to the current tutorial below, so it might be better to also move this link at the end of the tutorial as additional info. --> 
 
-## A Conceptual Understanding of the Intended Product
-
-Read the introduction of the finished Heir Module API to gain a vision of what we are about to create. 
+## A Conceptual Understanding of the Intended Product  <!-- dimxy maybe 'A Conceptual Understanding of a new Antara Module to be developed' -->
+<!-- dimxy: I suggest adding here a phrase giving reader an idea that he is going to develop a simplified version of existing Heir Module, like: 'In this tutorial you will develop asimplified version of the existing Antara Heir Module'  -->
+Read the introduction of the finished Heir Module API to gain a vision of what we are about to create. <!-- dimxy maybe do we need  'finished' here? -->
 
 (Read until the start of the section named <b>Heir Module Flow</b> and then pause.)
 
