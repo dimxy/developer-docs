@@ -139,6 +139,8 @@ Observe the following transaction data structure for the existing Heir module:
   "overwintered": false,
   "version": 1,
   "locktime": 0,
+<!-- dimxy2 suggestion to add descriptions to this long tx output, like 
+Array of vins, references to transaction outputs which are spent with this tx: -->
   "vin": [
     {
       "txid": "e5af0f5993d64e68c655e3ca9309d5fd4f10906032ab587fc2142673a3a73109",
@@ -159,6 +161,7 @@ Observe the following transaction data structure for the existing Heir module:
       "sequence": 4294967295
     }
   ],
+<!-- dimxy2 array of outputs: -->  
   "vout": [
     {
       "value": 5.00000000,
@@ -174,6 +177,7 @@ Observe the following transaction data structure for the existing Heir module:
         ]
       }
     },
+<!-- dimxy2 a cryptocondition vout -->
     {
       "value": 0.00010000,
       "valueZat": 10000,
@@ -202,6 +206,7 @@ Observe the following transaction data structure for the existing Heir module:
         ]
       }
     },
+<!-- dimxy2 Usual output with normal change -->    
     {
       "value": 0.99980000,
       "valueZat": 99980000,
@@ -216,6 +221,7 @@ Observe the following transaction data structure for the existing Heir module:
         ]
       }
     },
+<!-- dimxy2 Opreturn vout content -->
     {
       "value": 0.00000000,
       "valueZat": 0,
@@ -233,6 +239,8 @@ Observe the following transaction data structure for the existing Heir module:
 ```
 
 <!-- Dimxy: Maybe seeing everything above is too much. Is it possible to reduce? Also, this transaction above has additional information not included in the simplified Heir module. Therefore, it may confuse them. -->
+<!-- dimxy2 I suggest adding a description for tx output above. Otherwise it is unclear why it is here. Long output is scary.
+Right in the output like headers: 'this is array of vin', 'this is vout with cryptocondition', 'this is OP_RETURN vout with tx data' -->
 
 The <b>opreturn</b> is the last output in a transaction, and this output is never spendable under any circumstances. The <b>opreturn</b> is the location where all Antara module data is stored. 
 
@@ -259,8 +267,9 @@ The <b>opreturn</b> is the last output in a transaction, and this output is neve
 
 ```
 
+<!-- dimxy2 if to provide description for the previous tx full output we might not show the opreturn output above -->
 <!-- Dimxy: Let's be more descriptive about the asm and hex keys. They are the same, but asm is more descriptive. asm is partially decoded. -->
-<!-- dimxy in the asm we can see decoded as mnemonincs basci script opcodes, part specific for modules or hashed parts cannot be undecoded, hex still is output as is, undecoded -->
+<!-- dimxy2 in the asm we can see decoded as mnemonincs basci script opcodes, part specific for modules or hashed parts cannot be undecoded, hex still is output as is, undecoded -->
 
 Note how the value for the key, `asm`, begins with `OP_RETURN ... `, and is followed by hex-encoded data. 
 
@@ -372,7 +381,8 @@ The important aspect to note here is that an initial transaction of a module ins
 
 Answer: it's about the specific plan
 
---> <!-- dimxy maybe 'module data' ? -->
+--> 
+<!-- dimxy2 maybe 'module data' ? -->
 
 As time progresses, more transactions on the Smart Chain are performed under this module. Each of the module's transactions spends from the previous transaction outputs associated with the module and creates new unspent transactions. This process effectively creates a [linked-list data structure.](https://en.wikipedia.org/wiki/Linked_list)
 
@@ -389,6 +399,13 @@ Komodo has implemented our own unique version of CryptoConditions as a part of t
 The logical expressions of a CryptoCondition are stored in the scripts of transactions, and also in a supporting C library. The library is included during the installation procedure of the associated Smart Chain, and the library evaluates and checks the logical expressions that are stored in the transaction scripts. 
 
 <!-- Dimxy: I will check the content above to work on the description. --> 
+<!-- Dimxy2: I have read how it is formulated in the cc standard and suggest this variant:
+
+Komodo has implemented our own extended version of CryptoConditions as a part of the Antara framework. A CryptoCondition is a logical expression evaluated on electronic signatures and/or the hashes of transaction data. 
+
+The logical expressions of CryptoConditions are stored in encoded form in the scripts of spending transactions (scriptSig) and are called 'fulfillments'. The unspent transaction output scripts (scriptPubKey) contain the other part of a CryptoCondition which is a fingeprint of logical expression result and is called 'condition'. This part is used to validate 'fulfillment' evaluation and thus to allow this transaction output to be spent.
+Cryptoconditions are supported by a C library. The C library is included during the installation procedure of the associated Smart Chain, and is invoked by Komodod to evaluate and check CryptoCondtions that are stored in the transaction scripts.
+--> 
 
 #### The Importance of CryptoConditions
 
@@ -397,7 +414,12 @@ CryptoConditions allow a developer to build and evaluate complex logical express
 This is a key aspect of Antara's ability to allow the developer to add arbitrary code into their Smart Chain's consensus mechanism. Through CryptoConditions and other elements, the consensus mechanism can rule over the outcome of the arbitrary code across the Smart Chain's decentralized network of nodes.
 
 <!-- Dimxy: Probably accurate, but maybe we'll rephrase later. -->
+<!-- dimxy2: 
+What I'm concerned with the above is CryptoConditions is some logic over signatures and hashes. Arbitrary code is another thing, this is what eval code allows to do. I believe eval code is JL's extensions to cc standard.
+So my suggestion:
+Antara's extension to basic CryptoConditions is the ability for developers to add arbitrary code into Smart Chain's consensus mechanism which allows to create unlimited application specific transaction validation rules (like check if spending funds already allowed at this time?) Through CryptoConditions and other elements, the consensus mechanism can rule over the outcome of the arbitrary code across the Smart Chain's decentralized network of nodes.
 
+-->
 #### Makeup of a CryptoCondition
 
 <!-- the original stuff here was a little unclear for me when reading -->
@@ -416,6 +438,7 @@ A CryptoCondition consists of three parts:
   - Data can be included in the opreturn output of any CryptoConditions transaction
 
 <!-- the original content below was difficult to decipher. Specifically, I had a hard time understanding what the differences were between the condition and fulfillment's abilities. -->
+
 
 <!-- Dimxy: The "For example..." content may not be accurate. It is more complicated. -->
 
