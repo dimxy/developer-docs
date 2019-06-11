@@ -66,6 +66,7 @@ This section is optional, but recommended.
 #### Launch the RICK Smart Chain
 
 <!-- Note, only use one chain. If it's RICK, keep it RICK. -->
+<!-- dimxy: if the reader wanted to develop his own antara module he would still  need his own chain  -->
 <!-- dimxy maybe a paragraph like 'Setting Environment' is needed here -->  
 
 The community test chain, <b>RICK</b>, has the Heir module enabled and can serve our experiment purposes. Launch the chain as follows.
@@ -259,6 +260,7 @@ The <b>opreturn</b> is the last output in a transaction, and this output is neve
 ```
 
 <!-- Dimxy: Let's be more descriptive about the asm and hex keys. They are the same, but asm is more descriptive. asm is partially decoded. -->
+<!-- dimxy in the asm we can see decoded as mnemonincs basci script opcodes, part specific for modules or hashed parts cannot be undecoded, hex still is output as is, undecoded -->
 
 Note how the value for the key, `asm`, begins with `OP_RETURN ... `, and is followed by hex-encoded data. 
 
@@ -367,9 +369,10 @@ The important aspect to note here is that an initial transaction of a module ins
 
 <!-- should the below first sentence say "module instance"? 
 
+
 Answer: it's about the specific plan
 
--->
+--> <!-- dimxy maybe 'module data' ? -->
 
 As time progresses, more transactions on the Smart Chain are performed under this module. Each of the module's transactions spends from the previous transaction outputs associated with the module and creates new unspent transactions. This process effectively creates a [linked-list data structure.](https://en.wikipedia.org/wiki/Linked_list)
 
