@@ -391,18 +391,13 @@ With each transaction, the <b>opreturn</b> data is never spent, and remains in t
 
 Another important concept to understand is the nature of a <b>CryptoCondition</b>. This technology is part of [an industry-wide standard](https://tools.ietf.org/html/draft-thomas-crypto-conditions-01), and other platforms may use CryptoConditions differently.
 
-Komodo has implemented our own unique version of CryptoConditions as a part of the Antara framework. Here, a CryptoCondition is a logical expression. The expression is executed by electronic signatures and by the hashes of spent transactions. 
+<!-- Dimxy2: I have read how it is formulated in the cc standard and suggest this variant:--> 
 
-The logical expressions of a CryptoCondition are stored in the scripts of transactions, and also in a supporting C library. The library is included during the installation procedure of the associated Smart Chain, and the library evaluates and checks the logical expressions that are stored in the transaction scripts. 
+Komodo has implemented our own extended version of CryptoConditions as a part of the Antara framework. A CryptoCondition is a logical expression evaluated on electronic signatures and hashes of transaction data.  
+
+CryptoConditions are stored in the scripts of transactions and are evaluated by a supporting cryptocondition C library. The library is included during the installation procedure of a Smart Chain. 
 
 <!-- Dimxy: I will check the content above to work on the description. --> 
-<!-- Dimxy2: I have read how it is formulated in the cc standard and suggest this variant:
-
-Komodo has implemented our own extended version of CryptoConditions as a part of the Antara framework. A CryptoCondition is a logical expression evaluated on electronic signatures and/or the hashes of transaction data. 
-
-The logical expressions of CryptoConditions are stored in encoded form in the scripts of spending transactions (scriptSig) and are called 'fulfillments'. The unspent transaction output scripts (scriptPubKey) contain the other part of a CryptoCondition which is a fingeprint of logical expression result and is called 'condition'. This part is used to validate 'fulfillment' evaluation and thus to allow this transaction output to be spent.
-Cryptoconditions are supported by a C library. The C library is included during the installation procedure of the associated Smart Chain, and is invoked by Komodod to evaluate and check CryptoCondtions that are stored in the transaction scripts.
---> 
 
 #### The Importance of CryptoConditions
 
@@ -453,7 +448,7 @@ The <b>condition</b> (Part I) contains data that allow to check the CryptoCondit
 
 <!-- Dimxy: Review example in the content below.  -->
 
-The <b>logical fulfillment</b> (Part II) contains instructions and data about how the consensus mechanism should evaluate the CryptoCondition. For example, the logical fulfillment could include an instruction to check a spending-transaction's electronic signature and also include the `pubkey` associated with this signature.
+The <b>fulfillment</b> (Part II) contains instructions and data about how the consensus mechanism should evaluate the CryptoCondition. For example, the logical fulfillment could include an instruction to check a spending-transaction's electronic signature and also include the `pubkey` associated with this signature.
 So to evaluate this CryptoCondition the validation logic would first verify the electronic signature with the provided pubkey (evaluting the fulfillment) and then check the pubkey (calculating its fingerprint before) against the condition
 
 <!-- In the above, that was the best that I could interpret the original content, but the Part II description seems backwards to me. -->
@@ -479,9 +474,9 @@ The M of N thing is not provided by arbitrary code, but by the CC library. -->
 <!-- dimxy2 corrected: -->
 The answer is that there is an important difference in the CryptoCondition implementation. When a CryptoCondition transaction output is spent, the Antara module's code can enforce additional validation logic.
 
-This key difference illuminates the power of Antara. For example, additional arbitrary module code could include a validation logic that allows to spend the output only if the time has come for this. When the attempted spending-transaction has the matching  fulfillment, and both the CryptoCondition and the module validation code evaluate to `true` the transaction output is spent.
+This key difference illuminates the power of Antara. For example, additional arbitrary module code could include a validation logic that for example allows to spend the output only if the time has come for this. When the attempted spending-transaction has the matching fulfillment, and both the CryptoCondition and the Antara module validation code evaluate to `true` the transaction output is spent.
 
-Basic CryptoConditions features themselves allow to build more complex logical expressions than Bitcoin script. For example, one of such expressions could be that a spending transaction must be signed by at least `M` of `N` acceptable `pubkeys`.
+But even basic CryptoConditions features themselves allow to build more complex logical expressions than Bitcoin script can do. For example, one of such expressions could be that a spending transaction must be signed by at least `M` of `N` acceptable `pubkeys`.
 
 <!-- Dimxy: There is more here. CC allows for additional logic beyond what we have currently explained. Will provide example. -->
 
