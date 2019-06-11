@@ -221,7 +221,7 @@ Array of vins, references to transaction outputs which are spent with this tx: -
         ]
       }
     },
-<!-- dimxy2 Opreturn vout content -->
+<!-- dimxy2 At the end of the output array ther is an opreturn with Anatara module application serialized data   -->
     {
       "value": 0.00000000,
       "valueZat": 0,
@@ -377,12 +377,9 @@ The important aspect to note here is that an initial transaction of a module ins
 <!-- Make the above more clear by pointing specifically to "type": "cryptocondition" -->
 
 <!-- should the below first sentence say "module instance"? 
-
-
 Answer: it's about the specific plan
-
 --> 
-<!-- dimxy2 maybe 'module data' ? -->
+<!-- dimxy2 maybe 'Antara module data' ? -->
 
 As time progresses, more transactions on the Smart Chain are performed under this module. Each of the module's transactions spends from the previous transaction outputs associated with the module and creates new unspent transactions. This process effectively creates a [linked-list data structure.](https://en.wikipedia.org/wiki/Linked_list)
 
@@ -409,27 +406,26 @@ Cryptoconditions are supported by a C library. The C library is included during 
 
 #### The Importance of CryptoConditions
 
-CryptoConditions allow a developer to build and evaluate complex logical expressions that are based on the results of cryptographic functions.
-
-This is a key aspect of Antara's ability to allow the developer to add arbitrary code into their Smart Chain's consensus mechanism. Through CryptoConditions and other elements, the consensus mechanism can rule over the outcome of the arbitrary code across the Smart Chain's decentralized network of nodes.
+CryptoConditions allow a developer to build and evaluate complex logical expressions that are based on the results of cryptographic functions on transaction data.
+<!-- dimxy2: 
+What I'm concerned with the above is CryptoConditions is some logic over signatures and hashes. 
+Arbitrary code is another thing, this is what eval code allows to do. I believe eval code is JL's extension to cc standard.
+So my suggestion: -->
+Antara's extension to the basic CryptoConditions is the ability for developers to add arbitrary code into Smart Chain's consensus mechanism which allows to create virtually unlimited application specific transaction validation rules (like check if spending funds already allowed at this time?) Through CryptoConditions and other elements, the consensus mechanism can rule over the outcome of the cryptographic logic and arbitrary code across the Smart Chain's decentralized network of nodes.
 
 <!-- Dimxy: Probably accurate, but maybe we'll rephrase later. -->
-<!-- dimxy2: 
-What I'm concerned with the above is CryptoConditions is some logic over signatures and hashes. Arbitrary code is another thing, this is what eval code allows to do. I believe eval code is JL's extensions to cc standard.
-So my suggestion:
-Antara's extension to basic CryptoConditions is the ability for developers to add arbitrary code into Smart Chain's consensus mechanism which allows to create unlimited application specific transaction validation rules (like check if spending funds already allowed at this time?) Through CryptoConditions and other elements, the consensus mechanism can rule over the outcome of the arbitrary code across the Smart Chain's decentralized network of nodes.
 
--->
+
+
 #### Makeup of a CryptoCondition
 
 <!-- the original stuff here was a little unclear for me when reading -->
 
-A CryptoCondition consists of three parts: 
+A CryptoCondition consists of two parts: 
 
-- <b>Part I: A logical condition that must be met</b>
+- <b>Part I: A condition that must be met</b>
   - This is stored in the transaction output's `scriptPubKey` 
-  - This transaction output will be spent
-- <b>Part II: A logical fulfillment</b>
+- <b>Part II: A fulfillment</b>
   - This is stored in the `scriptSig` input of the transaction that spends the above output
  
 <!-- Dimxy: part 3 is incorrect. opreturn is part of the transaction, but not part of the cryptocondition. -->
@@ -438,14 +434,17 @@ A CryptoCondition consists of three parts:
   - Data can be included in the opreturn output of any CryptoConditions transaction
 
 <!-- the original content below was difficult to decipher. Specifically, I had a hard time understanding what the differences were between the condition and fulfillment's abilities. -->
-
+<!-- dimxy2 fulfillment is expression to evaluate, condition is result to check
+fulfillment is stored in a tx which spends and therefore needs to be validated,
+condition is stored in a tx which to be spent and which validates those who wants to spend
+-->
 
 <!-- Dimxy: The "For example..." content may not be accurate. It is more complicated. -->
-
-The <b>logical condition</b> (Part I) contains instructions and data that check the CryptoCondition. For example, the condition can include a reference to a specific `pubkey` value that must be associated with any attempt to spend this transaction output.
+<!-- dimxy2 rephrased -->
+The <b>condition</b> (Part I) contains data that allow to check the CryptoCondition in fingeprinted form. For example, the condition in a transaction output can refer to a specific `pubkey` which is allowed to spend this output.
 
 ```json
-# Dimxy: Providing an example later
+# Dimxy: Providing an example later <!-- dimxy2 corrected -->
 ```
 
 <!-- Note question below.
@@ -453,19 +452,20 @@ The <b>logical condition</b> (Part I) contains instructions and data that check 
 
 <!-- Dimxy: Review example in the content below.  -->
 
-The <b>logical fulfillment</b> (Part II) contains instructions and data about how the consensus mechanism should evaluate the CryptoCondition. For example, the logical fulfillment could include an instruction to check that any spending-transaction's signature has the correct value and associated `pubkey`.
+The <b>logical fulfillment</b> (Part II) contains instructions and data about how the consensus mechanism should evaluate the CryptoCondition. For example, the logical fulfillment could include an instruction to check a spending-transaction's electronic signature and also include the `pubkey` associated with this signature.
+So to evaluate this CryptoCondition the validation logic would first verify the electronic signature with the provided pubkey (evaluting the fulfillment) and then check the pubkey (calculating its fingerprint before) against the condition
 
 <!-- In the above, that was the best that I could interpret the original content, but the Part II description seems backwards to me. -->
 
 ```json
-# Dimxy: providing an example later
+# Dimxy: providing an example later <!-- dimxy2 corrected -->
 ```
 
 <!-- Fix content in parens below. -->
+<!-- dimxy2 corrected: -->
+To spend a transaction CryptoCondition output, first a node on the network must send a spending transaction which provides a fulfillment in its input for this CryptoCondition. The consensus mechanism uses the C library to evaluate the fulfillment of the spending transaction. The result of this evaluation is checked against the condition stored in the transaction output. 
 
-To fulfill the transaction output, first a node on the network must send a spending-transaction that is an attempt to spend the CryptoCondition transaction output. The consensus mechanism uses the C library to validate the logical fulfillment of the spending-transaction. The result of this validation is checked against the logical condition included in the (previous, CryptoCondition transaction).
-
-#### The Simplest of CryptoConditions
+#### The Simplest form of a CryptoCondition
 
 The simplest CryptoCondition evaluates an electronic signature of a spending-transaction's `scriptsig`. Assuming the evaluation is successful, the spending-transaction is then able to spend funds from the output of another transaction.
 
@@ -475,15 +475,18 @@ At first glance, you may be confused about why a CryptoCondition is useful in th
 
 The M of N thing is not provided by arbitrary code, but by the CC library. -->
 
-The answer is that there is an important difference in the CryptoCondition implementation. When a CryptoCondition transaction output is spent, the Antara module's code can enforce additional logic.
+<!-- dimxy2 corrected: -->
+The answer is that there is an important difference in the CryptoCondition implementation. When a CryptoCondition transaction output is spent, the Antara module's code can enforce additional validation logic.
 
-This key difference illuminates the power of Antara. For example, additional arbitrary code could include a logical condition that any attempted spending-transaction must be signed by at least `M` of `N` acceptable `pubkeys`. When the attempted spending-transaction has a suitable logical fulfillment, the CryptoCondition evaluates to `true`, and the transaction output is spent.
+This key difference illuminates the power of Antara. For example, additional arbitrary module code could include a validation logic that allows to spend the output only if the time has come for this. When the attempted spending-transaction has the matching  fulfillment, and both the CryptoCondition and the module validation code evaluate to `true` the transaction output is spent.
+
+Basic CryptoConditions features themselves allow to build more complex logical expressions than Bitcoin script. For example, one of such expressions could be that a spending transaction must be signed by at least `M` of `N` acceptable `pubkeys`.
 
 <!-- Dimxy: There is more here. CC allows for additional logic beyond what we have currently explained. Will provide example. -->
 
 Furthermore, application validation can accomplish this as well. We will examine this possibility further on in the tutorial.
 
-As logical conditions and fulfillments can be added to a CryptoCondition as desired, the developer can build a complex tree of subconditions that govern the movement of Smart Chain assets. In this sense, Antara is an advanced evolution of the basic Bitcoin Script security features of the original Bitcoin protocol (such as `pubkey` or `pubkey hash` scripts). 
+As logical conditions and subconditions can be added to a CryptoCondition as desired, the developer can build a complex logic that governs the movement of Smart Chain assets. In this sense, Antara is an advanced evolution of the basic Bitcoin Script security features of the original Bitcoin protocol (such as `pubkey` or `pubkey hash` scripts). 
 
 In this section, we became acquainted with the concept of logical conditions that are associated with transaction outputs, and logical fulfillments associated with spending-transactions. These two elements make up the rudimentary aspect of a CryptoCondition.
 
@@ -504,14 +507,14 @@ Also, there can often be a server layer, wherein the application connects nodes 
 #### A Global CC Address in the Antara Framework
 
 <!-- Who creates/uses/assigns this address? How can we see what it looks like? Where/when is it created? -->
-
+<!-- dimxy2 developer does. He should follow JL's Mastering cc instructions to generate pubkey and privkey for globala ddr and put in a special src file -->
 Each Antara module has an associated global CC address. The private key to this global CC address is publicly available. The address can be used for such tasks as sharing funds between users of this module, and anyone can attempt to spend funds from this address. 
 
 In the Antara codebase, this global CC address is sometimes called the "unspendable" address. This is likely a reference to the fact that for any user to spend funds from this address, the spending-transaction must pass the module's validation code. 
 
 <!-- I don't understand the content below? -->
-
-For example, a transaction can send funds to the global CC address so that these funds can be used as a marker. This marker can be found later through a special API function. The module's validation code would capture these funds and prohibit any user from ever spending from the transaction output of these funds, thus making them permanently fixed in the global CC address.
+<!-- dimxy2 rephrased -->
+For example, a transaction can send a fee to the global CC address so that this transaction output can be used as a search marker to enumerate all such transactions. The module's validation code could disable spending the markers and provide that transactions will always might be enumerated.
 
 <!-- We've done the "two parts" thing above, need to reorganize. Perhaps this goes earlier? -->
 
@@ -534,8 +537,10 @@ Development requirements for each Antara module:
 ## Antara Module Architecture
 
 From an architectural standpoint, an Antara module is simply a C/C++ source file.
+<!-- dimxy2 actually there are yet additions to the common cc source file src/cc/custom.cpp with module evalcode, a link to the validation function and the module global pubkey and privkey. This would integrate the antara module into validation framework -->
 
 <!-- The original prose here had a few missing nouns in the sentences, so I'm not sure I understand this yet. Are the RPC's in the source file? Or are they separate? -->
+<!-- dimxy2 i wanted also to draw source code diagram -->
 
 (Diagram of source code layout would go well here.)
 
@@ -839,6 +844,7 @@ Original Content:
 (what I ommitted in this sample), for example not negative or not exceeding some limit.
 
 -->
+<!-- dimxy2 there is a link to the full source code in my repo -->
 
 Note the method for parsing the hex representation of the pubkey parameter and converting it to a `CPubKey` object.
 
