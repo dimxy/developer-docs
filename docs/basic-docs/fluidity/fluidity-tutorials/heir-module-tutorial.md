@@ -429,9 +429,10 @@ A CryptoCondition consists of two parts:
   - This is stored in the `scriptSig` input of the transaction that spends the above output
  
 <!-- Dimxy: part 3 is incorrect. opreturn is part of the transaction, but not part of the cryptocondition. -->
-
+<!--
 - <b>Part III: Data in the OP_RETURN vout</b>
   - Data can be included in the opreturn output of any CryptoConditions transaction
+-->
 
 <!-- the original content below was difficult to decipher. Specifically, I had a hard time understanding what the differences were between the condition and fulfillment's abilities. -->
 <!-- dimxy2 fulfillment is expression to evaluate, condition is result to check
