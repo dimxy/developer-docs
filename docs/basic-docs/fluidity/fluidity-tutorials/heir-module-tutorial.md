@@ -550,9 +550,11 @@ _(Three for the EVAL code?)_
 
 <!-- Specifically how do you include these so that they will automatically be added to komodo-cli ? --> 
 
-The first part of the source file consists of the implementation of all Remote Procedure Calls (RPC's) for this module. These typically either perform transactions or query information about state and data. 
+The first part of the Antara's module source file consists of the implementation of all Remote Procedure Calls (RPC's) for this module. These typically either perform transactions or query information about state and data. 
 
-With this section properly added to the source file, the Smart Chain daemon's compiler will automatically make each RPC available at the command line and via `curl` through the `komodo-cli` software.
+You will also need to implement high level rpc command functions which are called by rpc enging and responsible for convertation of rpc  to native C++ data types. These rpc command functions should be added into an existing source in src/rpc directory, or you might create your own rpc source. The reference to rpc command functions should be added into global rpc command table in server.cpp source file.
+
+With this part is properly completed, the Smart Chain daemon's compiler will automatically make each RPC available at the command line through the `komodo-cli` software and via `curl` utility.
 
 Essentially all modules have at least these two RPC's.
 
@@ -575,12 +577,12 @@ A module's validation code is activated only when a transaction has at least one
 A module's initial transaction may not have a CC input. When this happens, the validation code is not triggered. Therefore, the transaction may be handled by the normal blockchain protocol.
 
 <!-- Should this information go here? Or towards the end, as an additional aside? Seems too prominent. -->
-
-A small aside here is that if you do need to write code that valdiates a spending-transaction that has no CC input, your code must first validate the initial transaction. If the result of the validation is `false`, then you can ignore the (spending-transaction?). 
+<!-- dimxy3 rephrased, could be removed if this seems not important here -->
+A small aside here is that if you do need to write code that validates a spending transaction that spends a transaction which has no CC input, your code must first validate that previous transaction too. If the result of the validation of it is `false`, then you can reject the spending transaction. 
 
 <!-- The below paragraph is important. It should probably go higher. -->
-
-The main purpose of validation code is to (?) prevent inappropriate structure and spending of module's spending transaction (?), especially as a means of protecting against malicious spending-transactions. (For example, a malicious actor could attempt to manually create a spending-transaction that bypasses the module's built-in RPC functions.)
+<!-- dimxy3 yes it should be the first paragraph -->
+The main purpose of validation code is to (?) prevent inappropriate structure and spending of Antara module's spending transaction (?), especially as a means of protecting against malicious spending-transactions. (For example, a malicious actor could attempt to manually create a spending-transaction that bypasses the module's built-in RPC functions.)
 
 
 We will delve into this section in thorough detail further on in the tutorial
@@ -606,14 +608,14 @@ An Antara transaction (tx) has one or more vins and one or more vouts.
 The CC vin of a current transaction contains the transaction id of a previous transaction. The current transaction spends the utxo of the previous transaction. 
 
 Each CC transaction has a vout that describes the requirements that must be met for any future CC transaction to consume the current transaction. 
-
-If the current CC transaction is consuming the vout of a CC transaction (e.g. not a normal transaction), the current CC transaction will have a fulfillment vin that must meet the requirements set forth by the fulfillment vout of the previous CC transaction.
+<!-- dimxy3 corrected -->
+If the current CC transaction is consuming the vout of a CC transaction (e.g. not a normal transaction), the current CC transaction will have a fulfillment vin that must meet the requirements set forth by the condition vout of the previous CC transaction.
 
 <!-- Could we get examples in here, like elsewhere? -->
 
 A CC transaction typically also has an opreturn vout that contains module data.
 
-#### Antara Module SDK
+#### Antara Module SDK <!-- dimxy3 or API? -->
 
 Komodo is building an SDK for Antara module development. The SDK is still in the early stages. Some of the SDK functions are already available, and can be found in the following source files:
 
@@ -664,7 +666,7 @@ I'll try to describe these tx structure with the semi-formal notation used in Ja
 | `vout.0` (?) | <b>The `1of2` CC address that holds the funds that belong to the owner and, once available, to the heir</b> |
 | `vout.1` | <b>The transaction fee to account for the `vout.0` amount above</b> <br> - The amount in `vout.1` is used as a marker. We will discuss markers and their uses cases further on in the tutorial |
 | `vout.2` | <b>Normal change</b> <br> - Recall that `change` is the leftover amount from the original utxo that the user does not intend to send to the destination address, and which the user desires to keep <br> - Any amount of leftover funds not included in the `change` utxo is forfeited to the miner of the block; this is how miners receive their mining fee |
-| `vout.n-1` | <b>OP_RETURN 'F' ownerpk heirpk inactivitytime heirname</b> <br> - This is the is the opreturn vout, and it contains any data relevant to the module <br> - The 'F' is a flag that indicates that this transaction is a "Funding" CC transaction <br> - `ownerpk` and `heirpk` respectively represent the pubkeys of the owner and heir <br> - Concerning `inactivitytime`, the owner should either make a donation to or spend from the `1of2` address within the `inactivitytime` amount of time to prevent opening the `1of2` address to the heir for spending. <br> - `heirname` is the name of this instance of the Heir module |
+| `vout.n-1` | <b>OP_RETURN EVAL_HEIR 'F' ownerpk heirpk inactivitytime heirname</b> <br> - This is the is the opreturn vout, and it contains any data relevant to the module <br> - The 'F' is a flag that indicates that this transaction is a "Funding" CC transaction <br> - `ownerpk` and `heirpk` respectively represent the pubkeys of the owner and heir <br> - Concerning `inactivitytime`, the owner should either make a donation to or spend from the `1of2` address within the `inactivitytime` amount of time to prevent opening the `1of2` address to the heir for spending. <br> - `heirname` is the name of this instance of the Heir module |
 
 Through a funding transaction, the owner of the initial funds creates a "plan," which we can also call a "contract," and deposits funds for future spending. 
 
@@ -674,13 +676,13 @@ The main funds for the plan are allocated to `vout.0` of our CC transaction.
 
 By design, and setting aside issues of timing, we desire that either the owner or the inheritor of the funds should be able to spend this utxo. We assume that the owner has one address, and the inheritor has another. To achieve this, we use an advanced CryptoConditions feature that states that either of two addresses can spend the funds. This is called a `1of2` CryptoCondition, and it is placed as a logical condition for (?) `vout.0 (?) or the OP_RETURN? vout.n-1`.
 
-A fee is allocated to `vout.1`. This is used as a marker. The marker allows a developer to use a special SDK function <!-- what function? --> to create a list of all initial transactions for the module. 
+A fee is allocated to `vout.1`. This is used as a marker. The marker allows a developer to use a special SDK function <!-- what function? -->  SetCCunspents() to create a list of all initial transactions for the module. 
 
 As usual, out of the remaining amount of our initial utxo, we need to send all that we desire to keep to our `change` address.
 
 Also, we need to leave an amount as an incentive for the miner. Any remainder beyond the sum total of our new `vout` values will automatically be allocated in this manner. We typically leave `10000` satoshis of our Smart Chain coin, by convention.
 
-Note the `F` letter in the opreturn structure. The `F` stands for "fund." By convention, the first byte of any opreturn is the `EVAL` code. We omitted the `EVAL` code in the description above <!-- why? can we put it in there? -->. The second byte is the transaction functional id.
+Note the `F` letter in the opreturn structure. The `F` stands for "fund." By convention, the first byte of any opreturn is the `EVAL` code.  <!-- why? can we put it in there? --><!-- dimxy3 I put eval back in the desc. I was removed  to make shorter the desc-->. The second byte is the transaction functional id, we use it to understand the transaction data structure in the opreturn. 
 
 We also stored other relevant data in the opreturn:
 
@@ -716,7 +718,7 @@ Note the functional id, `A`. This flag indicates that this transaction is an `ad
 | vout.0 | normal output, sent to the owner or the heir address |
 | vout.1 | `change` to CC `1of2` address |
 | vout.2 | `change` to user's address from transaction fee input, if any |
-| vout.n-1 | OP_RETURN `C` funding transaction HasHeirSpendingBegun |
+| vout.n-1 | OP_RETURN EVAL_HEIR `C` funding transaction HasHeirSpendingBegun |
 
 This transaction allows either the owner or the heir to spend funds from this plan instance. 
 
