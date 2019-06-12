@@ -718,7 +718,7 @@ Note the functional id, `A`. This flag indicates that this transaction is an `ad
 | vout.0 | normal output, sent to the owner or the heir address |
 | vout.1 | `change` to CC `1of2` address |
 | vout.2 | `change` to user's address from transaction fee input, if any |
-| vout.n-1 | OP_RETURN EVAL_HEIR `C` funding transaction HasHeirSpendingBegun |
+| vout.n-1 | OP_RETURN EVAL_HEIR `C` fundingtxid HasHeirSpendingBegun |
 
 This transaction allows either the owner or the heir to spend funds from this plan instance. 
 
@@ -732,9 +732,9 @@ We also indicate the normal `change`.
 
 The functional id, `C`, in the opreturn indicates that this is a "claim" type transaction. 
 
-We also include all the same opreturn data as in the `A` transaction.
+We also include all the same opreturn data as in the `A` transaction, that is fundingtxid and HasHeirSpendingBegun flag
 
-<!-- What is in there specifically? The fundtxid, and anything else? -->
+<!-- What is in there specifically? The fundtxid, and anything else? --><!-- dimxy3 extended -->
 
 ## Heir Module RPC Implementations
 
@@ -811,9 +811,13 @@ Therefore, we check that the wallet and Heir module features are available in th
 
 <!-- Can you please add more inline commentary below? What is the EnsureWalletIsAvailable command? and what is the ensure_CCrequirements command? State what arguments they take, as well.-->
 
+Ensure that the wallet object is initialized:
 ```cpp
     if (!EnsureWalletIsAvailable(fHelp))
         return NullUniValue;
+```
+Ensure that the chain params needed for Antara modules are correctly set (like 'addressindex' and 'spentindex') and Heir module is enabled on this chain
+```
     if (ensure_CCrequirements(EVAL_HEIR) < 0)
         throw runtime_error("to use CC contracts, you need to launch daemon with valid -pubkey= for an address in your wallet\n");
     // output help message if asked or params count is incorrect:
@@ -827,7 +831,7 @@ Lock the user's wallet:
     LOCK2(cs_main, pwalletMain->cs_wallet);	
 ```
 
-The UniValue object is a special type <!-- Is this unique to the Komodo source code? --> used to pass data in RPC calls. For parameters, UniValue requires an array of UniValue objects.
+The UniValue object is a special type <!-- Is this unique to the Komodo source code? --><!-- dimxy3 it came from bitcoin--> used to pass data in RPC calls. For parameters, UniValue requires an array of UniValue objects.
 
 We must convert these UniValue objects into normal C/C++ language types, and then pass them to the second level of our module implementation.
 
@@ -843,12 +847,14 @@ Original Content:
 
 -->
 <!-- dimxy2 there is a link to the full source code in my repo -->
-
+<!-- added example of check for amount -->
 Note the method for parsing the hex representation of the pubkey parameter and converting it to a `CPubKey` object.
 
 
 ```cpp
     CAmount amount = atof(params[0].get_str().c_str()) * COIN;  // Note conversion from satoshis to coins through a multiplication of 10E8
+    if( amount < 0 )
+    	throw runtime_error("amount cant be negative");
     std::string name = params[1].get_str();
     std::vector<uint8_t> vheirpubkey = ParseHex(params[2].get_str().c_str());
     CPubKey heirpk = pubkey2pk(vheirpubkey);
@@ -879,6 +885,8 @@ Original content:
 Here is the skeleton of the heirfund rpc implementation.
 
 -->
+<!-- dimxy3 we provide a link to full src at the end 
+the idea was to give extended comment for most important parts of module -->
 
 ```cpp
 // heirfund transaction creation code, src/cc/heir.cpp
