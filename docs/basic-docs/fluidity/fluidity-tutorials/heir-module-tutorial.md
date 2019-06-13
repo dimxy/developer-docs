@@ -139,10 +139,8 @@ Observe the following transaction data structure for the existing Heir module:
   "overwintered": false,
   "version": 1,
   "locktime": 0,
-```
 <!-- dimxy2 suggestion to add descriptions to this long tx output, like: -->
 List of transaction inputs, that is, references to transaction outputs which are spent with this tx: 
-```
   "vin": [
     {
       "txid": "e5af0f5993d64e68c655e3ca9309d5fd4f10906032ab587fc2142673a3a73109",
@@ -163,9 +161,8 @@ List of transaction inputs, that is, references to transaction outputs which are
       "sequence": 4294967295
     }
   ],
-```
-List of transaction outputs: <!-- dimxy2  -->  
-```
+
+  List of transaction outputs: <!-- dimxy2  -->  
   "vout": [
     {
       "value": 5.00000000,
@@ -181,10 +178,7 @@ List of transaction outputs: <!-- dimxy2  -->
         ]
       }
     },
-<!-- dimxy2  -->
-```
-This is a cryptocondition output which contains fingerprinted condition:
-```
+    This is a cryptocondition output which contains fingerprinted condition:
     {
       "value": 0.00010000,
       "valueZat": 10000,
@@ -199,6 +193,7 @@ This is a cryptocondition output which contains fingerprinted condition:
         ]
       }
     },
+    Usual output with normal coins
     {
       "value": 999994.06084534,
       "valueZat": 99999406084534,
@@ -213,10 +208,7 @@ This is a cryptocondition output which contains fingerprinted condition:
         ]
       }
     },
-<!-- dimxy2 -->    
-```
-Usual output with normal change to self
-```
+    Usual output with normal coins:
     {
       "value": 0.99980000,
       "valueZat": 99980000,
@@ -231,10 +223,7 @@ Usual output with normal change to self
         ]
       }
     },
-<!-- dimxy2    -->
-```
-At the end of the output array there is an opreturn output with serialized data created by Anatara Heir module:
-```
+    At the end of the output array there is an opreturn output with serialized data created by Anatara Heir module:
     {
       "value": 0.00000000,
       "valueZat": 0,
