@@ -558,7 +558,7 @@ From an architectural standpoint, an Antara module is simply a C/C++ source file
 
 (Diagram of source code layout would go well here.)
 
-[![Antara module development](https://github.com/dimxy/images/blob/master/CC-Antara-arch-v1.png)](https://github.com/dimxy/images/blob/master/CC-Antara-arch-v1.png)
+[![Antara module development](https://github.com/dimxy/images/blob/master/CC-Antara-arch-v1.0.1.png)](https://github.com/dimxy/images/blob/master/CC-Antara-arch-v1.0.1.png)
 
 
 <!-- Do we want to show a directory tree here, to show how the files are actually organized in the directory? -->
