@@ -722,8 +722,8 @@ We also stored other relevant data in the opreturn:
 | `vout.1` | normal change |
 | `vout.n-1` | OP_RETURN 'A' fundingtxid HasHeirSpendingBegun |
 
-<!-- does the above mean that vout.0 can be either the owner or the heir's address? -->
-
+<!-- does the above mean that vout.0 can be either the owner or the heir's address? --> <!-- dimxy3 vout.0
+ is an address consisting of two parts, the owner and heir pubkeys. It allows to spend the vout from any of them --> 
 This transaction serves the purpose of adding more funds to the owner's address. The transaction uses normal coin inputs (non-CC) and sends them to the CC `1of2` address.
 
 We include the transaction id (txid) of the initial transaction in the opreturn to bind the add transaction to the plan.
@@ -747,7 +747,7 @@ To pay the transaction fee to the miners, the transaction has a normal input tha
 
 The transaction also has a CC input for spending the claimed value from the `1of2` fund address.
 
-As for outputs, the claimed value is sent to the claimer's normal address <!-- What's this about? -->, and unspent `change` is returned to the `1of2` address.
+As for outputs, the claimed value is sent to the claimer's normal address <!-- What's this about? --><!-- dimxy3 this means the claimed value is released from the module control and might be spent as usual coins, the remaining value returned back to 1of2 funds addr  -->, and unspent `change` is returned to the `1of2` address.
 
 We also indicate the normal `change`.
 
@@ -831,6 +831,7 @@ Recall that a Smart Chain must have the [<b>ac_cc</b>](../basic-docs/smart-chain
 Therefore, we check that the wallet and Heir module features are available in the Smart Chain. We also check the RPC parameter's required number:
 
 <!-- Can you please add more inline commentary below? What is the EnsureWalletIsAvailable command? and what is the ensure_CCrequirements command? State what arguments they take, as well.-->
+<!-- dmxy3 added more comments -->
 
 Ensure that the wallet object is initialized:
 ```cpp
@@ -906,8 +907,8 @@ Original content:
 Here is the skeleton of the heirfund rpc implementation.
 
 -->
-<!-- dimxy3 we provide a link to full src at the end 
-the idea was to give extended comment for most important parts of module -->
+<!-- dimxy3 we provide a link to full sources at the end 
+the idea of the code shown here was to give extended descriptions for most important parts of module -->
 
 ```cpp
 // heirfund transaction creation code, src/cc/heir.cpp
@@ -928,6 +929,7 @@ Declare and initialize an `CCcontract_info` object with Heir module variables, s
     cp = CCinit(&C, EVAL_HEIR);
 ```
 
+#### Adding Inputs to Tx
 Add inputs to the transaction that are enough to make a deposit of the requested amount to the Heir fund. Also add one fee to serve as a marker, and another for the miners.
 
 By tradition, we use a constant fee of `10000` satoshis.
@@ -951,9 +953,9 @@ The parameters passed to the `AddNormalinputs()` function are:
 - The limit on the quantity of utxos the daemon can take from the wallet of the user 
   - Natuarlly, only utxos that are available via the wallet's private keys can be used for these inputs
 
-<!-- should we label the above "code the inputs" and the below "code the outputs"? -->
+<!-- should we label the above "code the inputs" and the below "code the outputs"? --><!-- dimxy3 added such header -->
 
-#### Outputs
+#### Adding Outputs to Tx
 
 According to our specification, we need two outputs: one for the funding deposit and one for the marker.
 
@@ -961,7 +963,7 @@ Here, we use two CC SDK functions that are designed to create CC vouts.
 
 The first is `MakeCC1of2vout`. This creates a CC vout with a threshold of `2` addresses that can spend from the plan funds. We supply as arguments the two potential addresses, represented here as `myPubkey` and `heirPubkey`.
 
-<!-- Sidd: maybe, for CryptoCondition, we need another name that implies the logic pair. Is there something already like this in technology? --> 
+<!-- Sidd: maybe, for CryptoCondition, we need another name that implies the logic pair. Is there something already like this in technology? --> <!-- dimxy3 what logic pair, this pair of pks? -->
 
 `MakeCC1vout` creates a vout with a simple CryptoCondition which sends a transaction fee to the Heir module global CC address. (This is returned by the `GetUnspendable()` function call below.) We need the global CC address so that we can both mark the transaction, and to find all Heir funding plans. 
 
@@ -970,7 +972,9 @@ You will always need some kind of marker for any instance of an Antara module pl
 We call this a <b>marker pattern</b> in Antara development, and we will explore this later in the tutorial.
 
 <!-- The below code feels like it needs more description? -->
-
+<!-- dimxy3 added more comments -->
+This first statement creates a vout with a threshold cryptocondition allowing to spend it with one of two possible pubkeys and adds this vout to the transaction. Note the eval code EVAL_HEIR that would trigger the Heir validation code when the tx will be added to the Smart Chain.
+This second statement creates a marker vout with a simple cryptocondition with a small fee sent to Heir Module global address and adds this vout to the transaction. This vout will be used for retrieving the list of all funding transction in heirlist rpc.
 ```cpp
         mtx.vout.push_back( MakeCC1of2vout(EVAL_HEIR, amount, myPubkey, heirPubkey) );
         mtx.vout.push_back( MakeCC1vout(EVAL_HEIR, txfee, GetUnspendable(cp, NULL)) );
@@ -999,17 +1003,17 @@ In case the `AddNormalinputs()` function cannot find sufficient owner coins for 
 
 Note that we do not need to add the normal change output here because the `FinalizeCCTx` function add the change output for us.
 
-`FinalizeCCTx` also builds the transaction input `scriptSigs` (both normal and CC aspects), adds signatures, and returns a signed transaction in hexadecimal.
+`FinalizeCCTx` also builds the transaction input `scriptSigs` (both normal and CC aspects), adds tx signatures to them, and returns a signed transaction in hexadecimal encoding.
 
-Also note the `E_MARSHAL()` function. This serializes variables of various types to a byte array. The byte array is then serialized to a `CScript` object. The object is stored in the `scriptPubKey` transaction field. 
+Also note the `E_MARSHAL()` function. This serializes variables of various supported types to a byte array. The byte array is then serialized to a `CScript` object. The object is stored in the `scriptPubKey` transaction field in the last opreturn vout with transaction data. 
 
 <!-- what about the E_UNMARSHAL function? Can you describe what it does with a little more detail? -->
-
-There is also the mirror `E_UNMARSHAL()` function.
+<!-- dimxy3 added about E_UNMARSHAL -->
+There is also the mirror `E_UNMARSHAL()` function used for unpacking opreturn data from CScript object to C++ variables and further processing.
 
 The returned transaction is ready to be sent to the Smart Chain network using the [<b>sendrawtransaction</b>](../basic-docs/smart-chains/smart-chain-api/rawtransactions.html#sendrawtransaction) RPC.
 
-#### Implmenting the heirclaim RPC
+#### Implementing the heirclaim RPC
 
 As before, this implementation has two levels. The first level checks the required environment and converts the parameters. The second level creates the final transaction. 
 
@@ -1115,7 +1119,7 @@ Find the most recent owner transaction to calculate the owner's inactivity time.
     }
 ```
 
-Check whether the inactivity time of the owner has surpassed the amount designated in the plan. The <!-- CCduration ? --> CC SDK function returns the time (in seconds) since the confirmation of the block that bears the provided transaction to the chain-tip block.
+Check whether the inactivity time of the owner has surpassed the amount designated in the plan. The <!-- CCduration ? --> CCduration CC SDK function returns the time (in seconds) since the confirmation of the block that bears the provided transaction to the chain-tip block.
 
 If `hasHeirSpendingBegun` is already `true`, there is no need to also check the owner's inactivity time.
 
