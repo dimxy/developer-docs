@@ -130,6 +130,7 @@ Transactions can store data in multiple forms. In the simplest form, transaction
 When we desire to place additional data into a transaction, we place this data into an <b>OP_RETURN</b>, or "<b>opreturn</b>" for short.
 
 Observe the following transaction data structure for the existing Heir module:
+<!-- dimxy2 suggestion is to add descriptions to the parts of this long tx output, like: -->
 
 ```bash
 ./komodo-cli -ac_name=HELLOWORLD heirfund 0 5 MyDogHeir 037736c263991316c6a23397a982a1f8c18ae8642e944448162a93a824c31f9299 100 'http://billionaire.com/mywill md5=5385639869'
@@ -139,8 +140,8 @@ Observe the following transaction data structure for the existing Heir module:
   "overwintered": false,
   "version": 1,
   "locktime": 0,
-<!-- dimxy2 suggestion to add descriptions to this long tx output, like: -->
-List of transaction inputs, that is, references to transaction outputs which are spent with this tx: 
+  
+  List of transaction inputs, that is, references to transaction outputs which are spent with this tx: 
   "vin": [
     {
       "txid": "e5af0f5993d64e68c655e3ca9309d5fd4f10906032ab587fc2142673a3a73109",
@@ -162,7 +163,7 @@ List of transaction inputs, that is, references to transaction outputs which are
     }
   ],
 
-  List of transaction outputs: <!-- dimxy2  -->  
+  **List of transaction outputs:**
   "vout": [
     {
       "value": 5.00000000,
@@ -178,6 +179,7 @@ List of transaction inputs, that is, references to transaction outputs which are
         ]
       }
     },
+    
     This is a cryptocondition output which contains fingerprinted condition:
     {
       "value": 0.00010000,
@@ -193,7 +195,8 @@ List of transaction inputs, that is, references to transaction outputs which are
         ]
       }
     },
-    Usual output with normal coins
+    
+    Normal (not a cryptocondition) output with standard OP_CHECKSIG script
     {
       "value": 999994.06084534,
       "valueZat": 99999406084534,
@@ -208,7 +211,8 @@ List of transaction inputs, that is, references to transaction outputs which are
         ]
       }
     },
-    Usual output with normal coins:
+    
+    Normal output with standard OP_CHECKSIG script:
     {
       "value": 0.99980000,
       "valueZat": 99980000,
@@ -223,6 +227,7 @@ List of transaction inputs, that is, references to transaction outputs which are
         ]
       }
     },
+    
     At the end of the output array there is an opreturn output with serialized data created by Anatara Heir module:
     {
       "value": 0.00000000,
@@ -234,6 +239,7 @@ List of transaction inputs, that is, references to transaction outputs which are
         "type": "nulldata"
       }
     }
+    
   ],
   "vjoinsplit": [
   ]
