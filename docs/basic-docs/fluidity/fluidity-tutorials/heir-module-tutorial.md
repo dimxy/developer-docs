@@ -139,8 +139,10 @@ Observe the following transaction data structure for the existing Heir module:
   "overwintered": false,
   "version": 1,
   "locktime": 0,
-<!-- dimxy2 suggestion to add descriptions to this long tx output, like 
-Array of vins, references to transaction outputs which are spent with this tx: -->
+```
+<!-- dimxy2 suggestion to add descriptions to this long tx output, like: -->
+List of transaction inputs, that is, references to transaction outputs which are spent with this tx: 
+```
   "vin": [
     {
       "txid": "e5af0f5993d64e68c655e3ca9309d5fd4f10906032ab587fc2142673a3a73109",
@@ -161,7 +163,9 @@ Array of vins, references to transaction outputs which are spent with this tx: -
       "sequence": 4294967295
     }
   ],
-<!-- dimxy2 array of outputs: -->  
+```
+List of transaction outputs: <!-- dimxy2  -->  
+```
   "vout": [
     {
       "value": 5.00000000,
@@ -177,7 +181,10 @@ Array of vins, references to transaction outputs which are spent with this tx: -
         ]
       }
     },
-<!-- dimxy2 a cryptocondition vout -->
+<!-- dimxy2  -->
+```
+This is a cryptocondition output which contains fingerprinted condition:
+```
     {
       "value": 0.00010000,
       "valueZat": 10000,
@@ -206,7 +213,10 @@ Array of vins, references to transaction outputs which are spent with this tx: -
         ]
       }
     },
-<!-- dimxy2 Usual output with normal change -->    
+<!-- dimxy2 -->    
+```
+Usual output with normal change to self
+```
     {
       "value": 0.99980000,
       "valueZat": 99980000,
@@ -221,7 +231,10 @@ Array of vins, references to transaction outputs which are spent with this tx: -
         ]
       }
     },
-<!-- dimxy2 At the end of the output array ther is an opreturn with Anatara module application serialized data   -->
+<!-- dimxy2    -->
+```
+At the end of the output array there is an opreturn output with serialized data created by Anatara Heir module:
+```
     {
       "value": 0.00000000,
       "valueZat": 0,
@@ -239,13 +252,13 @@ Array of vins, references to transaction outputs which are spent with this tx: -
 ```
 
 <!-- Dimxy: Maybe seeing everything above is too much. Is it possible to reduce? Also, this transaction above has additional information not included in the simplified Heir module. Therefore, it may confuse them. -->
-<!-- dimxy2 I suggest adding a description for tx output above. Otherwise it is unclear why it is here. Long output is scary.
-Right in the output like headers: 'this is array of vin', 'this is vout with cryptocondition', 'this is OP_RETURN vout with tx data' -->
+<!-- dimxy2 I suggest adding a descriptions for tx output above. Otherwise it is unclear why it is here. Such long outputs are scary.
+please see how I suggest doing this ^^^ -->
 
 The <b>opreturn</b> is the last output in a transaction, and this output is never spendable under any circumstances. The <b>opreturn</b> is the location where all Antara module data is stored. 
 
 <!-- Dimxy: Further on in the tutorial, I show how to actually place opreturn data in place. May want to mention that here. -->
-
+<!-- dimxy3 if we added description to the previous tx output we may omit this output as it repeats the part of the previous -->
 ```bash
   "vout": [
     
