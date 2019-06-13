@@ -163,7 +163,7 @@ Observe the following transaction data structure for the existing Heir module:
     }
   ],
 
-  **List of transaction outputs:**
+  List of transaction outputs:
   "vout": [
     {
       "value": 5.00000000,
@@ -438,10 +438,10 @@ A CryptoCondition consists of two parts:
 -->
 
 <!-- the original content below was difficult to decipher. Specifically, I had a hard time understanding what the differences were between the condition and fulfillment's abilities. -->
-<!-- dimxy2 fulfillment is expression to evaluate, condition is result to check
-fulfillment is stored in a tx which spends and therefore needs to be validated,
-condition is stored in a tx which to be spent and which validates those who wants to spend
--->
+<!-- dimxy2 
+Fulfillment is an expression to be evaluated, condition is a result to be checked.
+A fulfillment is stored in an input of a tx which spends and needs to be validated,
+A condition is stored in an output of a tx which is to be spent and validates spending tx inputs -->
 
 <!-- Dimxy: The "For example..." content may not be accurate. It is more complicated. -->
 <!-- dimxy2 rephrased -->
