@@ -247,8 +247,7 @@ Observe the following transaction data structure for the existing Heir module:
 ```
 
 <!-- Dimxy: Maybe seeing everything above is too much. Is it possible to reduce? Also, this transaction above has additional information not included in the simplified Heir module. Therefore, it may confuse them. -->
-<!-- dimxy2 I suggest adding a descriptions for tx output above. Otherwise it is unclear why it is here. Such long outputs are scary.
-please see how I suggest doing this ^^^ -->
+<!-- dimxy2 I suggest adding some descriptions for tx listing above (for selected parts). Otherwise it is unclear why it is here. Such long listings are not easy to understand without comments. Please see how I suggest doing this ^^^ -->
 
 The <b>opreturn</b> is the last output in a transaction, and this output is never spendable under any circumstances. The <b>opreturn</b> is the location where all Antara module data is stored. 
 
@@ -277,7 +276,7 @@ The <b>opreturn</b> is the last output in a transaction, and this output is neve
 
 <!-- dimxy2 if to provide description for the previous tx full output we might not show the opreturn output above -->
 <!-- Dimxy: Let's be more descriptive about the asm and hex keys. They are the same, but asm is more descriptive. asm is partially decoded. -->
-<!-- dimxy2 in the asm we can see decoded as mnemonincs basci script opcodes, part specific for modules or hashed parts cannot be undecoded, hex still is output as is, undecoded -->
+<!-- dimxy2 in the 'asm' field we can see some script opcodes decoded as mnemonincs, other part is specific for modules or hashed and cannot be undecoded. 'Hex' field is just undecoded printing  -->
 
 Note how the value for the key, `asm`, begins with `OP_RETURN ... `, and is followed by hex-encoded data. 
 
@@ -391,7 +390,7 @@ Answer: it's about the specific plan
 
 As time progresses, more transactions on the Smart Chain are performed under this module. Each of the module's transactions spends from the previous transaction outputs associated with the module and creates new unspent transactions. This process effectively creates a [linked-list data structure.](https://en.wikipedia.org/wiki/Linked_list)
 
-With each transaction, the <b>opreturn</b> data is never spent, and remains in the blockchain database for future use.
+With each transaction, the <b>opreturn</b> output is never spent, and remains in the blockchain as a source of Antara module data (read only).
 
 ## Understanding CryptoConditions
 
@@ -399,8 +398,7 @@ With each transaction, the <b>opreturn</b> data is never spent, and remains in t
 
 Another important concept to understand is the nature of a <b>CryptoCondition</b>. This technology is part of [an industry-wide standard](https://tools.ietf.org/html/draft-thomas-crypto-conditions-01), and other platforms may use CryptoConditions differently.
 
-<!-- Dimxy2: I have read how it is formulated in the cc standard and suggest this variant:--> 
-
+<!-- Dimxy2: I have read how it is described in the cc standard and suggest such variant:--> 
 Komodo has implemented our own extended version of CryptoConditions as a part of the Antara framework. A CryptoCondition is a logical expression evaluated on electronic signatures and hashes of transaction data.  
 
 CryptoConditions are stored in the scripts of transactions and are evaluated by a supporting cryptocondition C library. The library is included during the installation procedure of a Smart Chain. 
@@ -414,7 +412,8 @@ CryptoConditions allow a developer to build and evaluate complex logical express
 What I'm concerned with the above is CryptoConditions is some logic over signatures and hashes. 
 Arbitrary code is another thing, this is what eval code allows to do. I believe eval code is JL's extension to cc standard.
 So my suggestion: -->
-Antara's extension to the basic CryptoConditions is the ability for developers to add arbitrary code into Smart Chain's consensus mechanism which allows to create virtually unlimited application specific transaction validation rules (like check if spending funds already allowed at this time?) Through CryptoConditions and other elements, the consensus mechanism can rule over the outcome of the cryptographic logic and arbitrary code across the Smart Chain's decentralized network of nodes.
+Antara's extension to the basic CryptoCondition library is the ability to add arbitrary code into Smart Chain's consensus mechanism which allows for developers to create virtually unlimited application-specific transaction validation rules (like check if spending funds already allowed at the present time). 
+Through CryptoConditions and Antara's extensions, the consensus mechanism can rule over the outcome of the cryptocondition logic and arbitrary validation code across the Smart Chain's decentralized network of nodes.
 
 <!-- Dimxy: Probably accurate, but maybe we'll rephrase later. -->
 
@@ -429,7 +428,7 @@ A CryptoCondition consists of two parts:
 - <b>Part I: A condition that must be met</b>
   - This is stored in the transaction output's `scriptPubKey` 
 - <b>Part II: A fulfillment</b>
-  - This is stored in the `scriptSig` input of the transaction that spends the above output
+  - This is stored in the `scriptSig` filed of the input of the transaction that spends the above output
  
 <!-- Dimxy: part 3 is incorrect. opreturn is part of the transaction, but not part of the cryptocondition. -->
 <!--
@@ -438,14 +437,13 @@ A CryptoCondition consists of two parts:
 -->
 
 <!-- the original content below was difficult to decipher. Specifically, I had a hard time understanding what the differences were between the condition and fulfillment's abilities. -->
-<!-- dimxy2 
-Fulfillment is an expression to be evaluated, condition is a result to be checked.
-A fulfillment is stored in an input of a tx which spends and needs to be validated,
+<!-- dimxy2 Basicaly a 'fulfillment' is an expression to be evaluated, but a 'condition' is the result of this expression which is to be checked.
+A fulfillment is stored in an input of a tx which spends and therefore it needs to be validated,
 A condition is stored in an output of a tx which is to be spent and validates spending tx inputs -->
 
 <!-- Dimxy: The "For example..." content may not be accurate. It is more complicated. -->
 <!-- dimxy2 rephrased -->
-The <b>condition</b> (Part I) contains data that allow to check the CryptoCondition in fingeprinted form. For example, the condition in a transaction output can refer to a specific `pubkey` which is allowed to spend this output.
+The <b>condition</b> (Part I) contains data that allow to check the CryptoCondition in fingeprinted form. For example, the condition in a transaction output can include a specific `pubkey` (fingerprinted) which is allowed to spend this output.
 
 ```json
 # Dimxy: Providing an example later <!-- dimxy2 corrected -->
@@ -456,10 +454,10 @@ The <b>condition</b> (Part I) contains data that allow to check the CryptoCondit
 
 <!-- Dimxy: Review example in the content below.  -->
 
-The <b>fulfillment</b> (Part II) contains instructions and data about how the consensus mechanism should evaluate the CryptoCondition. For example, the logical fulfillment could include an instruction to check a spending-transaction's electronic signature and also include the `pubkey` associated with this signature.
-So to evaluate this CryptoCondition the validation logic would first verify the electronic signature with the provided pubkey (evaluting the fulfillment) and then check the pubkey (calculating its fingerprint before) against the condition
+The <b>fulfillment</b> (Part II) contains instructions and data about how the consensus mechanism should evaluate the CryptoCondition. For example, the fulfillment could include an instruction to check a spending-transaction's electronic signature and also include the `pubkey` associated with this signature.
+So to evaluate this CryptoCondition the validation logic would first verify the electronic signature with the provided pubkey (evaluting the fulfillment) and then calculate fingerprint of the result (with the pubkey) and check the fingerprinted result against the condition.
 
-<!-- In the above, that was the best that I could interpret the original content, but the Part II description seems backwards to me. -->
+<!-- In the above, that was the best that I could interpret the original content, but the Part II description seems backwards to me. --><!-- dimxy3 I changed the description and added comments, maybe it would help -->
 
 ```json
 # Dimxy: providing an example later <!-- dimxy2 corrected -->
@@ -504,21 +502,33 @@ There are yet other elements of an Antara-based CryptoCondition. One element is 
 
 An Antara module can be described as a combination of a data layer and a business-logic layer in an application. The data layer is the collection of transactions related to the Antara module, and the business-logic layer is the modules arbitrary code.
 
-These two layers tie in with other layers in an Antara-based software application. For example, the software could include a presentation layer, consistenting of a Graphical User Interface (GUI) and other visual/audio elements. 
+These two layers tie in with other layers in an Antara-based software application. For example, the software external to the blockchain could include a presentation layer, consisting of a Graphical User Interface (GUI) and other visual elements. <!-- dimxy3 why audio? --> 
 
-Also, there can often be a server layer, wherein the application connects nodes and their data across the Internet. This is often the case in Antara-based software applications that make use of the [<b>Oracles</b>](../basic-docs/fluidity/fluidity-api/oracles.html#introduction) Antara module. 
+Also, there can often be a oracle layer, wherein the oracle software connect nodes to external data source across the Internet. This is often the case in Antara-based software applications that make use of the [<b>Oracles</b>](../basic-docs/fluidity/fluidity-api/oracles.html#introduction) Antara module. 
 
 #### A Global CC Address in the Antara Framework
 
 <!-- Who creates/uses/assigns this address? How can we see what it looks like? Where/when is it created? -->
-<!-- dimxy2 developer does. He should follow JL's Mastering cc instructions to generate pubkey and privkey for globala ddr and put in a special src file -->
+<!-- dimxy2 developer does this. He should follow JL's Mastering cc instructions to generate pubkey and privkey for the global addr and add them in the special src file cc/custom.cpp -->
 Each Antara module has an associated global CC address. The private key to this global CC address is publicly available. The address can be used for such tasks as sharing funds between users of this module, and anyone can attempt to spend funds from this address. 
+
+<!-- dimxy3 added example of CC global address -->
+This is an example of global CC address created and assigned for Heir module.
+HeirCCaddr is the CC global address itself, HeirCChexstr is the pubkey and HeirCCpriv is the privkey for the Heir CC global address. HeirNormaladdr is the `normal` address for the same pubkey and privkey, it might be used if spending from it does not need to be validated by the Antara module.
+```
+const char *HeirCCaddr = "RDVHcSekmXgeYBqRupNTmqo3Rn8QRXNduy";
+const char *HeirNormaladdr = "RTPwUjKYECcGn6Y4KYChLhgaht1RSU4jwf";
+char HeirCChexstr[67] = { "03c91bef3d7cc59c3a89286833a3446b29e52a5e773f738a1ad2b09785e5f4179e" };
+uint8_t HeirCCpriv[32] = { 0x9d, 0xa1, 0xf8, 0xf7, 0xba, 0x0a, 0x91, 0x36, 0x89, 0x9a, 0x86, 0x30, 0x63, 0x20, 0xd7, 0xdf, 0xaa, 0x35, 0xe3, 0x99, 0x32, 0x2b, 0x63, 0xc0, 0x66, 0x9c, 0x93, 0xc4, 0x5e, 0x9d, 0xb9, 0xce };
+```
 
 In the Antara codebase, this global CC address is sometimes called the "unspendable" address. This is likely a reference to the fact that for any user to spend funds from this address, the spending-transaction must pass the module's validation code. 
 
 <!-- I don't understand the content below? -->
-<!-- dimxy2 rephrased -->
-For example, a transaction can send a fee to the global CC address so that this transaction output can be used as a search marker to enumerate all such transactions. The module's validation code could disable spending the markers and provide that transactions will always might be enumerated.
+<!-- dimxy3 rephrased -->
+For example, the global CC address could store funds shared between several users. As CC global address' privkey is publicly available, anyone might try to spend these funds. This is where Antara validation code will take its role and control who is allows to spend funds and by which rules. Of course, the rpc part of the Antara module also should prevent the creation of transactions which would be rejected by the validation code.
+
+In another example, a transaction could send a fee to the global CC address so that this transaction's output can be used as a search key, a marker, to enumerate all such transactions with the SetCCunspents SDK function. The module's validation code can disable spending the markers and provide that transactions will always might be enumerated.
 
 <!-- We've done the "two parts" thing above, need to reorganize. Perhaps this goes earlier? -->
 
@@ -529,12 +539,12 @@ Development requirements for each Antara module:
 - Allocate a new `EVAL` code for your contract
   - If you would like this module to be available across the Komodo ecosystem, please reach out to our team to let us know your intended `EVAL` code <b>(?)</b>
 - Assign a global CC address for the module
-- (? Something about normal addresses was in the original material, does the developer need to do anything to facilitate these normal addresses? Or can a user create them automatically?)
+- (? Something about normal addresses was in the original material, does the developer need to do anything to facilitate these normal addresses? Or can a user create them automatically?)  <!-- dimxy3 normal addresses are usual addresses like in Bicoin to send or receive coins. The transaction inputs referred by such normal addresses are bypassed by Antara's module validation -->
 - Define the module's transactions
   - This includes the structure of their inputs, outputs, and opreturn format
 - Implement the common RPC functions that nearly all modules feature
   - These are typically functions for retrieving a list of all of the module's initial transactions, and for retrieving user addresses and the global CC address
-- Implement the module's unique RPC functions
+- Implement the module's specific RPC functions
   - These are used to create the module-related transactions and to return relevant information about the module's data and state
 - Implement the module's validation code
 
@@ -544,9 +554,10 @@ From an architectural standpoint, an Antara module is simply a C/C++ source file
 <!-- dimxy2 actually there are yet additions to the common cc source file src/cc/custom.cpp with module evalcode, a link to the validation function and the module global pubkey and privkey. This would integrate the antara module into validation framework -->
 
 <!-- The original prose here had a few missing nouns in the sentences, so I'm not sure I understand this yet. Are the RPC's in the source file? Or are they separate? -->
-<!-- dimxy2 i wanted also to draw source code diagram -->
+<!-- dimxy2 Antara source code diagram -->
 
 (Diagram of source code layout would go well here.)
+
 
 <!-- Do we want to show a directory tree here, to show how the files are actually organized in the directory? -->
 
@@ -559,7 +570,7 @@ _(Three for the EVAL code?)_
 <!-- Specifically how do you include these so that they will automatically be added to komodo-cli ? --> 
 
 The first part of the Antara's module source file consists of the implementation of all Remote Procedure Calls (RPC's) for this module. These typically either perform transactions or query information about state and data. 
-
+<!-- dimxy3 added how to implement high level rpc function-->
 You will also need to implement high level rpc command functions which are called by rpc enging and responsible for convertation of rpc  to native C++ data types. These rpc command functions should be added into an existing source in src/rpc directory, or you might create your own rpc source. The reference to rpc command functions should be added into global rpc command table in server.cpp source file.
 
 With this part is properly completed, the Smart Chain daemon's compiler will automatically make each RPC available at the command line through the `komodo-cli` software and via `curl` utility.
