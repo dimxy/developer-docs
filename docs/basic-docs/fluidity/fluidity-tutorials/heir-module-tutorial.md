@@ -453,7 +453,7 @@ The <b>condition</b> (Part I) contains data that allow to check the CryptoCondit
 <!-- Dimxy: Review example in the content below.  -->
 The <b>fulfillment</b> (Part II) contains instructions and data about how the consensus mechanism should evaluate the CryptoCondition. For example, the fulfillment could include an instruction to check a spending-transaction's electronic signature and also include the `pubkey` associated with this signature.
 
-[![Cryptoconditions evaluation principle](https://github.com/dimxy/images/blob/master/cc-verify-work-v2.png)](https://github.com/dimxy/images/blob/master/cc-verify-work-v2.png)
+[![Cryptoconditions evaluation principle](https://github.com/dimxy/images/blob/master/cc-verify-work-v2.1.png)](https://github.com/dimxy/images/blob/master/cc-verify-work-v2.1.png)
 So to evaluate this CryptoCondition the validation logic would first verify the electronic signature with the provided pubkey (evaluting the fulfillment) and then calculate fingerprint of the result (with the pubkey) and check the fingerprinted result against the condition.
 
 <!-- In the above, that was the best that I could interpret the original content, but the Part II description seems backwards to me. --><!-- dimxy3 I changed the description and added comments, maybe it would help -->
