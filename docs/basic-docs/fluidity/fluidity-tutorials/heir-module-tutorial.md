@@ -668,7 +668,7 @@ Our tasks are the following:
 
 ### Heir Module Transactions
 
-We require three types of module transactions
+We require three types of Heir module transactions
 
 - an initial transaction with which a user creates the fund for inheritance
 - a transaction for additional funding
@@ -676,7 +676,7 @@ We require three types of module transactions
 
 (?
 I'll try to describe these tx structure with the semi-formal notation used in James Lee 'Mastering cryptocondition' book which allows to specify vins or vouts position in a tx and their description.
-)
+) <!--dimxy5 this could be removed -->
 
 #### The Initial Transaction: Creating a Fund
 
@@ -686,7 +686,7 @@ I'll try to describe these tx structure with the semi-formal notation used in Ja
 | `vout.0` (?) | <b>The `1of2` CC address that holds the funds that belong to the owner and, once available, to the heir</b> |
 | `vout.1` | <b>The transaction fee to account for the `vout.0` amount above</b> <br> - The amount in `vout.1` is used as a marker. We will discuss markers and their uses cases further on in the tutorial |
 | `vout.2` | <b>Normal change</b> <br> - Recall that `change` is the leftover amount from the original utxo that the user does not intend to send to the destination address, and which the user desires to keep <br> - Any amount of leftover funds not included in the `change` utxo is forfeited to the miner of the block; this is how miners receive their mining fee |
-| `vout.n-1` | <b>OP_RETURN EVAL_HEIR 'F' ownerpk heirpk inactivitytime heirname</b> <br> - This is the is the opreturn vout, and it contains any data relevant to the module <br> - The 'F' is a flag that indicates that this transaction is a "Funding" CC transaction <br> - `ownerpk` and `heirpk` respectively represent the pubkeys of the owner and heir <br> - Concerning `inactivitytime`, the owner should either make a donation to or spend from the `1of2` address within the `inactivitytime` amount of time to prevent opening the `1of2` address to the heir for spending. <br> - `heirname` is the name of this instance of the Heir module |
+| `vout.n-1` | 'n-1' means the last transaction in vout list, following c-language conventions of numbering n-array elements from 0 to n-1. <b>OP_RETURN EVAL_HEIR 'F' ownerpk heirpk inactivitytime heirname</b> <br> - This is the is the opreturn vout, and it contains any data relevant to the module <br> - The 'F' is a flag that indicates that this transaction is a "Funding" CC transaction <br> - `ownerpk` and `heirpk` respectively represent the pubkeys of the owner and heir <br> - Concerning `inactivitytime`, the owner should either make a donation to or spend from the `1of2` address within the `inactivitytime` amount of time to prevent opening the `1of2` address to the heir for spending. <br> - `heirname` is the name of this instance of the Heir module |
 
 Through a funding transaction, the owner of the initial funds creates a "plan," which we can also call a "contract," and deposits funds for future spending. 
 
@@ -696,7 +696,7 @@ The main funds for the plan are allocated to `vout.0` of our CC transaction.
 
 By design, and setting aside issues of timing, we desire that either the owner or the inheritor of the funds should be able to spend this utxo. We assume that the owner has one address, and the inheritor has another. To achieve this, we use an advanced CryptoConditions feature that states that either of two addresses can spend the funds. This is called a `1of2` CryptoCondition, and it is placed as a logical condition for (?) `vout.0 (?) or the OP_RETURN? vout.n-1`.
 
-A fee is allocated to `vout.1`. This is used as a marker. The marker allows a developer to use a special SDK function <!-- what function? -->  SetCCunspents() to create a list of all initial transactions for the module. 
+A fee is allocated to `vout.1`. This is used as a marker. The marker allows a developer to use a special SDK function <!-- what function? --><!--dimxy5 added:-->  SetCCunspents() to create a list of all initial transactions for the module. 
 
 As usual, out of the remaining amount of our initial utxo, we need to send all that we desire to keep to our `change` address.
 
@@ -719,7 +719,7 @@ We also stored other relevant data in the opreturn:
 | `vins.*` | normal inputs |
 | `vout.0` | the funding CC `1of2` address for the owner and heir |
 | `vout.1` | normal change |
-| `vout.n-1` | OP_RETURN 'A' fundingtxid HasHeirSpendingBegun |
+| `vout.n-1` | OP_RETURN EVAL_HEIR 'A' fundingtxid HasHeirSpendingBegun |
 
 <!-- does the above mean that vout.0 can be either the owner or the heir's address? --> <!-- dimxy3 vout.0
  is an address consisting of two parts, the owner and heir pubkeys. It allows to spend the vout from any of them --> 
@@ -754,7 +754,7 @@ The functional id, `C`, in the opreturn indicates that this is a "claim" type tr
 
 We also include all the same opreturn data as in the `A` transaction, that is fundingtxid and HasHeirSpendingBegun flag
 
-<!-- What is in there specifically? The fundtxid, and anything else? --><!-- dimxy3 extended -->
+<!-- What is in there specifically? The fundtxid, and anything else? --><!-- dimxy3 extended the phrase -->
 
 ## Heir Module RPC Implementations
 
