@@ -66,7 +66,7 @@ This section is optional, but recommended.
 #### Launch the RICK Smart Chain
 
 <!-- Note, only use one chain. If it's RICK, keep it RICK. -->
-<!-- dimxy: if the reader wanted to develop his own antara module he would still  need his own chain  -->
+<!-- dimxy: two chains is okay: if the reader wanted to develop his own antara module he would still need his own chain  -->
 <!-- dimxy maybe a paragraph like 'Setting Environment' is needed here -->  
 
 The community test chain, <b>RICK</b>, has the Heir module enabled and can serve our experiment purposes. Launch the chain as follows.
@@ -688,7 +688,7 @@ I'll try to describe these tx structure with the semi-formal notation used in Ja
 | `vout.2` | <b>Normal change</b> <br> - Recall that `change` is the leftover amount from the original utxo that the user does not intend to send to the destination address, and which the user desires to keep <br> - Any amount of leftover funds not included in the `change` utxo is forfeited to the miner of the block; this is how miners receive their mining fee |
 | `vout.n-1` | 'n-1' means the last transaction in vout list, following c-language conventions of numbering n-array elements from 0 to n-1. <b>OP_RETURN EVAL_HEIR 'F' ownerpk heirpk inactivitytime heirname</b> <br> - This is the is the opreturn vout, and it contains any data relevant to the module <br> - The 'F' is a flag that indicates that this transaction is a "Funding" CC transaction <br> - `ownerpk` and `heirpk` respectively represent the pubkeys of the owner and heir <br> - Concerning `inactivitytime`, the owner should either make a donation to or spend from the `1of2` address within the `inactivitytime` amount of time to prevent opening the `1of2` address to the heir for spending. <br> - `heirname` is the name of this instance of the Heir module |
 
-Through a funding transaction, the owner of the initial funds creates a "plan," which we can also call a "contract," and deposits funds for future spending. 
+Through a funding transaction, the owner of the initial funds creates a "funding plan," which we can also call a module data instance and deposits funds for future spending. 
 
 The initial funds are taken from the normal `vout` values of a utxo. The initial transaction of this plan can be the beginning of the relationship between the funds in the utxo and the Heir module.
 
