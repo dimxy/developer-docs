@@ -253,7 +253,7 @@ Observe the following transaction data structure for the existing Heir module:
 The <b>opreturn</b> is the last output in a transaction, and this output is never spendable under any circumstances. The <b>opreturn</b> is the location where all Antara module data is stored. 
 
 <!-- Dimxy: Further on in the tutorial, I show how to actually place opreturn data in place. May want to mention that here. -->
-<!-- dimxy3 if we added description to the previous tx output we may omit this output as it repeats the part of the previous -->
+<!-- dimxy3 if we added description to the previous tx output we may omit this and following outputs as they are repeating parts of the previous tx listing. Maybe add all descriptions as cooment into the first common tx listing. It'd make shorter the doc  -->
 ```bash
   "vout": [
     
