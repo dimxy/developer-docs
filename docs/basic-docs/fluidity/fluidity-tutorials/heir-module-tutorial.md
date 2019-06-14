@@ -445,19 +445,15 @@ A condition is stored in an output of a tx which is to be spent and validates sp
 <!-- Dimxy: The "For example..." content may not be accurate. It is more complicated. -->
 <!-- dimxy2 rephrased -->
 The <b>condition</b> (Part I) contains data that allow to check the CryptoCondition in fingeprinted form. For example, the condition in a transaction output can include a specific `pubkey` (fingerprinted) which is allowed to spend this output.
-
 ```json
 # Dimxy: Providing an example later <!-- dimxy2 corrected -->
 ```
-
-[![Cryptocondition evaluation principle](https://github.com/dimxy/images/blob/master/cc-verify-work-v1.png)](https://github.com/dimxy/images/blob/master/cc-verify-work-v1.png)
-
 <!-- Note question below.
 -->
-
 <!-- Dimxy: Review example in the content below.  -->
-
 The <b>fulfillment</b> (Part II) contains instructions and data about how the consensus mechanism should evaluate the CryptoCondition. For example, the fulfillment could include an instruction to check a spending-transaction's electronic signature and also include the `pubkey` associated with this signature.
+
+[![Cryptocondition evaluation principle](https://github.com/dimxy/images/blob/master/cc-verify-work-v1.png)](https://github.com/dimxy/images/blob/master/cc-verify-work-v1.png)
 So to evaluate this CryptoCondition the validation logic would first verify the electronic signature with the provided pubkey (evaluting the fulfillment) and then calculate fingerprint of the result (with the pubkey) and check the fingerprinted result against the condition.
 
 <!-- In the above, that was the best that I could interpret the original content, but the Part II description seems backwards to me. --><!-- dimxy3 I changed the description and added comments, maybe it would help -->
