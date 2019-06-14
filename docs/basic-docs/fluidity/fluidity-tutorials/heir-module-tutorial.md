@@ -141,7 +141,7 @@ Observe the following transaction data structure for the existing Heir module:
   "version": 1,
   "locktime": 0, 
   
-  //List of transaction inputs, that is, references to transaction outputs which are spent with this tx: 
+  /* List of transaction's inputs, that is, references to the outputs of transactions which are spent with this transaction: */
   "vin": [
     {
       "txid": "e5af0f5993d64e68c655e3ca9309d5fd4f10906032ab587fc2142673a3a73109",
@@ -163,7 +163,7 @@ Observe the following transaction data structure for the existing Heir module:
     }
   ],
 
-  List of transaction outputs:
+  /* List of transaction's outputs: */
   "vout": [
     {
       "value": 5.00000000,
@@ -180,7 +180,7 @@ Observe the following transaction data structure for the existing Heir module:
       }
     },
     
-    This is a cryptocondition output which contains fingerprinted condition:
+    /* This is a cryptocondition output which contains fingerprinted condition: */
     {
       "value": 0.00010000,
       "valueZat": 10000,
@@ -196,7 +196,7 @@ Observe the following transaction data structure for the existing Heir module:
       }
     },
     
-    Normal (not a cryptocondition) output with standard OP_CHECKSIG script
+    /* Normal (not a cryptocondition) output with standard OP_CHECKSIG script: */
     {
       "value": 999994.06084534,
       "valueZat": 99999406084534,
@@ -212,7 +212,7 @@ Observe the following transaction data structure for the existing Heir module:
       }
     },
     
-    Normal output with standard OP_CHECKSIG script:
+    /* Normal output with standard OP_CHECKSIG script: */
     {
       "value": 0.99980000,
       "valueZat": 99980000,
@@ -228,7 +228,7 @@ Observe the following transaction data structure for the existing Heir module:
       }
     },
     
-    At the end of the output array there is an opreturn output with serialized data created by Anatara Heir module:
+    /* At the end of the output array there is an opreturn output with serialized data created by Anatara Heir module: */
     {
       "value": 0.00000000,
       "valueZat": 0,
