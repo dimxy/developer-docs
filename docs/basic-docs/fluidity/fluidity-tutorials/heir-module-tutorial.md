@@ -132,16 +132,16 @@ When we desire to place additional data into a transaction, we place this data i
 Observe the following transaction data structure for the existing Heir module:
 <!-- dimxy2 suggestion is to add descriptions to the parts of this long tx output, like: -->
 
-```bash
+```cpp
 ./komodo-cli -ac_name=HELLOWORLD heirfund 0 5 MyDogHeir 037736c263991316c6a23397a982a1f8c18ae8642e944448162a93a824c31f9299 100 'http://billionaire.com/mywill md5=5385639869'
 
 {
   "txid": "9307989767c1d10b3c97834c7e9f50583387907848bc9776b4b77a705791864c",
   "overwintered": false,
   "version": 1,
-  "locktime": 0,
+  "locktime": 0, 
   
-  List of transaction inputs, that is, references to transaction outputs which are spent with this tx: 
+  //List of transaction inputs, that is, references to transaction outputs which are spent with this tx: 
   "vin": [
     {
       "txid": "e5af0f5993d64e68c655e3ca9309d5fd4f10906032ab587fc2142673a3a73109",
