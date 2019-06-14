@@ -132,7 +132,7 @@ When we desire to place additional data into a transaction, we place this data i
 Observe the following transaction data structure for the existing Heir module:
 <!-- dimxy2 suggestion is to add descriptions to the parts of this long tx output, like: -->
 
-```cpp
+```jsonc
 ./komodo-cli -ac_name=HELLOWORLD heirfund 0 5 MyDogHeir 037736c263991316c6a23397a982a1f8c18ae8642e944448162a93a824c31f9299 100 'http://billionaire.com/mywill md5=5385639869'
 
 {
