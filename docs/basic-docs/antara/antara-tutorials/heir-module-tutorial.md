@@ -882,7 +882,7 @@ Finally, call the Heir module code, pass our values (now in C++ type format), an
 ```
 
 <!-- there should be a link here to the completed file. -->
-See this in the source code: https://github.com/dimxy/komodo/blob/heir-simple/src/wallet/rpcwallet.cpp#L7740 <!-- dimxy maybe not to add line number as it might change.. ->
+See this in the source code: https://github.com/dimxy/komodo/blob/heir-simple/src/wallet/rpcwallet.cpp#L7740 <!-- dimxy maybe not to add line number as it might change.. -->
 
 ### Second Level Implementation <!-- dimxy it is better to make it one level up as it includes the following next sections, till the heir claim section -->
 
@@ -1003,7 +1003,7 @@ As before, this implementation has two levels. The first level checks the requir
 ./komodo-cli -ac_name=YOURCHAIN heirclaim fundingtxid amount
 ```
 
-##### Add the RPC to komodo-cli
+##### Add the RPC command to komodo-cli
 
 Add a new command to `komodo-cli` by adding a new element into the `vRPCCommands` array in the source file `src/server.cpp`.
 
@@ -1403,7 +1403,7 @@ The following are the aspects of validation the Heir module requires.
 - The inital funding transaction <!-- This is the same as the "initial" transaction, correct? --><!--dimxy yes-->
   - Validate that the `1of2` address accurately matches `pubkeys` in the OP_RETURN
 - The ~~spending~~ claiming transaction <!-- This is the same as the "claim" transaction, correct? -->
-  - Validate the txid <!-- should ID be plural? --> in the OP_RETURNS and OP_RETURN of the transaction spent (`vintx`) <!-- I've never heard of a vintx? --> which binds the transaction to the contract instance data, so the txids should be equal to the initial txid. <!-- I don't understand this well enough to edit. -->
+  - Validate that this transaction spends transactions from the same funding plan, for this fundingtxid values <!-- should ID be plural? --> from the OP_RETURN outputs of the transactions should match.(`vintx`) <!-- I've never heard of a vintx? -->~~which binds the transaction to the contract instance data, so the txids should be equal to the initial txid. ~~<!-- I don't understand this well enough to edit. --><!-- dimxy corrected -->
 - Validate whether the heir is allowed to spend the funds
   - Check whether the flag indicates that the Heir is already spending the funds
   - Check whether enough time has passed since the last time the owner was active on the chain
@@ -1524,9 +1524,10 @@ Validation for the claiming transaction.
   - For example, check the inactivity time of the owner and whether the heir has already spent funds from the `1of2` address
 - Check whether the new flag, `hasHeirSpendingBegun`, is set correctly
 
-Both of the following support functions, `CheckSpentTxns` and `CheckInactivityTime`, are in the (? link ?) `heir.cpp` source file.
+Both of the following support functions, `CheckSpentTxns` and `CheckInactivityTime`, are in the (? link ?) `heir.cpp` source file. https://github.com/dimxy/komodo/blob/heir-simple/src/cc/heir.cpp
 
 <!-- Let's at least link to these in a permanently location that is held within the docs center. Likely, we should have permanent downloadable files for this tutorial, so that we don't have to try to keep it in sync with any other development. -->
+<!-- dimxy for now the files in my repo, let's move them to the permanent location -->
 
 ```cpp
     case 'C':
@@ -1616,7 +1617,7 @@ Instructions to build the Komodo binaries, including the necessary CC modules, c
 | vin | An input, or an array of inputs, in a transaction structure (tx.vin) |
 | vout | An output, or an array of outputs, in a transaction structure (tx.vout) |
 
-## CC contract patterns
+## CC contract patterns<!-- dimxy maybe remove this section, it might be overwhelming -->
 
 <!-- Perhaps we should include the marker pattern here, and possibly move this earlier in the docs, or something? -->
 
@@ -1706,7 +1707,7 @@ For example, the [<b>Payments</b>]() Antara module uses <!-- this function? --> 
 CTxOut MakeCC1of2vout(uint8_t evalcode,CAmount nValue,CPubKey pk1,CPubKey pk2, std::vector<std::vector<unsigned char>>* vData)
 ```
 
-For the RPC that manages merge functionality, <!-- I couldn't quite tell what this was about? --> we use the `vData` optional parameter to append the opreturn directly to the `ccvout` itself, rather than an actual opreturn as the last `vout` in a transaction. 
+For the RPC that manages merge functionality, <!-- I couldn't quite tell what this was about? --><!-- dimxy it's blackjok's example from his Payment cc. Seems, this supposes that some context is known to the reader --> we use the `vData` optional parameter to append the opreturn directly to the `ccvout` itself, rather than an actual opreturn as the last `vout` in a transaction. 
 
 ```cpp
 opret = EncodePaymentsMergeOpRet(createtxid);
@@ -1751,7 +1752,7 @@ if ( tx.vout.size() == 1 )
 
 ## Various Tips and Tricks in Antara Module Development
 
-<!-- These might belong in a separate document? -->
+<!-- These might belong in a separate document? --><!-- dimxy I suggest moving this into another doc --> 
 
 #### Test Chain Mining Issue
 
