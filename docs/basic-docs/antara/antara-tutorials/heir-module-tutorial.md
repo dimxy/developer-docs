@@ -164,7 +164,7 @@ Observe the following transaction data structure for the existing Heir module:
 ./komodo-cli -ac_name=HELLOWORLD heirfund 0 5 MyDogHeir 037736c263991316c6a23397a982a1f8c18ae8642e944448162a93a824c31f9299 100 'http://billionaire.com/mywill md5=5385639869'
 ```
 
-##### Response (annotated)
+##### Response (annotated)  <!-- dimxy I suggest using 'jsonc' syntax (not 'json'): seems comments are looking better with it 
 
 <collapse-text hidden="true" style="margin-top: 1rem;" title="Full Response">
 
@@ -436,16 +436,26 @@ The <b>condition</b> (Part I) contains data that checks the CryptoCondition in f
 
 The <b>fulfillment</b> (Part II) contains instructions and data about how the consensus mechanism should evaluate the CryptoCondition. For example, the fulfillment could include an instruction to check a spending-transaction's electronic signature as well as the the `pubkey` associated with this signature.
 
-To spend a transaction CryptoCondition output, first a node on the network must send a spending transaction which provides a fulfillment in its input for this CryptoCondition. <!--dimxy moved here, seems this looks more logically here -->
-When a transaction with a CryptoCondition input spends another transaction CryptoCondition output, the consensus mechanism validates the fulfillment in the input and checks that it matches condition. For our example validation logic would first verify the electronic signature with the provided pubkey. Then the validation logic calculates the fingerprint of the pubkey and checks it against the condition.
+To spend a transaction CryptoCondition output, first a node on the network must send a spending transaction which provides a fulfillment in its input for this CryptoCondition. <!--dimxy moved here form the bottom, seems this looks more logically here -->
+When a transaction with a CryptoCondition input spends another transaction's CryptoCondition output, the consensus mechanism validates the fulfillment in the input and checks that it matches the condition in the output. 
+For our electronic signature example above, the validation logic first verifies the electronic signature with the provided pubkey. Then the validation logic calculates the fingerprint of the pubkey and checks it against the condition.
+<!-- dimxy I added about eval code here as I put here a diagram that tries to highlight Antara module validation in both aspects cryptocondition and arbitrary code (which is triggered by the eval code in cc input). So I need to mention it here too -->
+Also there is an Antara's extension to CryptoConditions, a special 'eval' cryptocondition which is an identificator bound to a specific Antara's module. When the validation code founds the Antara's module eval code in the spending transaction input it calls Module's Validate function.
+The process of validation of Antara Module's transactions is depicted on the diagram below:
+<div style="clear: both; margin-top: 1rem; margin-bottom: 1rem; float: right; display: block;">
 
-<!-- Language above wasn't clear. Tried to fix as best as I can. I don't fully understand what a fingerprint is, so I don't know what this is referring to specifically. --><!-- Actually there is no a separated fulfillment evaluation. There is always evaluation of the fulfillment in spending tx and checking the condition in the tx being spent. That's why I wrote 'So to evaluate this CryptoCondition..'.
-Seems this is confusing (with fulfillment evaluation). Here is how the standard says:
+<img src="https://github.com/dimxy/images/blob/master/cc-verify-work-v2.3.png" style="border: 0.5rem solid white; margin: 1rem 0rem 1rem 0rem;" ><!-- dimxy it is temp location for pictures, to how they look. We'll move them to the site repo when we agree about them   -->
+
+</div>
+
+<!-- Language above wasn't clear. Tried to fix as best as I can. I don't fully understand what a fingerprint is, so I don't know what this is referring to specifically. -->
+<!-- dimxy Actually there is no a dedicated fulfillment evaluation. There is always evaluation of the fulfillment in spending tx and checking the condition in the tx being spent. That's why I wrote 'So to evaluate this CryptoCondition..'.
+Seems this is confusing (with fulfillment evaluation). Here is how the standard says about condition and fulfillment:
 'A condition uniquely identifies a logical "boolean circuit"... 
 A fulfillment is a data structure encoding one or more cryptographic signatures and hash digest preimages that define the structure of the circuit and provide inputs to the logic gates allowing for the result of the circuit to be evaluated.
 A fulfillment is validated by evaluating that the circuit output is TRUE but also that the provided fulfillment matches the circuit    fingerprint, the condition.' 
 So a spending tx must fulfill the condition in the tx that it spends.
-With this I suggest corrections (see above) -->
+With this in mind I suggest corrections (see above) -->
 
 The consensus mechanism uses the C library to evaluate the fulfillment of the spending transaction. The result of this evaluation is checked against the condition stored in the transaction output. 
 
@@ -459,7 +469,7 @@ The answer is that there is an important difference in the CryptoCondition imple
 
 This key difference illuminates the power of Antara. For example, additional arbitrary module code could include validation logic that allows a user to spend the output only at the appropriate time. The transaction output is spend only once an attempting spending-transaction has the matching fulfillment, and both the CryptoCondition and the Antara module validation code evaluate to `true`.
 
-Even the basic CryptoCondition features offer more complex logical expressions than a normal Bitcoin script. For example, with CC a spending transaction could be requir signatures from at least `M` of `N` acceptable `pubkeys`.
+Even the basic CryptoCondition features offer more complex logical expressions than a normal Bitcoin script. For example, with CC a spending transaction could be required to have signatures from at least `M` of `N` acceptable `pubkeys`.
 
 Application validation can accomplish this as well. We will examine this possibility further on in the tutorial.
 
@@ -487,13 +497,13 @@ dimxy3 why audio?
 
 Sidd: I don't see a reference to audio above? Perhaps you removed it? Fine either way.
 
---> <!-- dimxy yes, 'audio' looks like not relevant very much to blockchains -->
+--> <!-- dimxy yes, 'audio' looked like not relevant very much to blockchains, I removed it -->
 
 <!--
 
 Sidd: Is the below a reference to another external layer? Should we make a heading for external layers?
 
--->
+--><!-- dimxy I think we actually do not explicitly distinguish layers in Antara modules. I'd they are similar to usual apps in that the data is transactions and business logic is module's c++ code, to make the architecture more understanable for developers, by comparison  -->
 
 Also, there can often be an oracle layer, wherein oracle software connects nodes to external data sources across the Internet. This can be the case in Antara-based software applications that make use of the [<b>Oracles</b>](../basic-docs/fluidity/fluidity-api/oracles.html#introduction) Antara module. 
 
@@ -531,12 +541,12 @@ dimxy3: - normal addresses are usual addresses like in Bicoin to send or receive
 
 sidd: what specifically should we put here as a bullet point for this topic? Do we say that normal addresses are already
 
--->
+--><!-- dimxy I removed 'CC' in 'Assign a global CC address', it would assume that both normal and cc addresses are assigned -->
 
 Development requirements for each Antara module:
 
 - Allocate a new `EVAL` code for your contract
-- Assign a global CC address for the module
+- Assign a global address for the module
 - Define the module's transactions
   - This includes the structure of their inputs, outputs, and opreturn format
 - Implement the common RPC functions that nearly all modules feature
