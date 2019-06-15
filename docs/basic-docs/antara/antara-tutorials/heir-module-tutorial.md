@@ -469,13 +469,13 @@ At first glance, you may be confused about why a CryptoCondition is useful in th
 
 The answer is that there is an important difference in the CryptoCondition implementation. When a CryptoCondition transaction output is spent, the Antara module's code can enforce additional validation logic. This is accomplished via an element called the `EVAL` code which is stored in the CryptoCondition's inputs and outputs. It will be described more in Heir Module development section.
 
-This key difference illuminates the power of Antara. For example, additional arbitrary module validation code could include validation logic that allows a user to spend the output only at the appropriate time. The transaction output is spend only once an attempting spending-transaction has the matching fulfillment, and both the CryptoCondition and the Antara module validation code evaluate to `true`.
+This key difference illuminates the power of Antara. For example, additional arbitrary Antara module validation code could include validation logic that allows a user to spend the output only at the appropriate time. The transaction output is spend only once an attempting spending-transaction has the matching fulfillment, and both the CryptoCondition and the Antara module validation code evaluate to `true`.
 
 Even the basic CryptoCondition features offer more complex logical expressions than a normal Bitcoin script. For example, with CC a spending transaction could be required to have signatures from at least `M` of `N` acceptable `pubkeys`.
 
 As logical conditions and subconditions can be added to a CryptoCondition as desired, the developer can build complex logic that governs the movement of Smart Chain assets. <!--dimxy here we are speaking about basic cryptocoondition lib feature, not the arbitrary module validation code. So this phrase is attached to the previous where it is said that basic cryptocondition features allows to build logic expressions on signatures and keys.  --> In this sense, Antara is an advanced evolution of the basic Bitcoin Script security features, such as pubkey or pubkey hash scripts.
 
-Antara Module validation can accomplish even more to it.<!-- dimxy The Module validation (also called arbitrary code above) can do things more advanced than basic cryptocondition-->  We will examine this possibility further on in the tutorial.
+Antara Module validation can accomplish even more to it.<!-- dimxy The Module validation (also called arbitrary code above) can do things more advanced than basic cryptocondition-->  We will examine this possibility further on in the tutorial. <!-- dimxy maybe that section 'Antara Extensions to CryptoConditions' above to put after the current section as it describes more about the arbitrary validation? -->
 
 ~~In this section, we became acquainted with the concept of logical conditions that are associated with transaction outputs, and logical fulfillments associated with spending-transactions. These two elements make up the rudimentary aspect of a CryptoCondition.~~<!--dimxy moved up where we are speaking about crytpocondtions
 
@@ -485,7 +485,7 @@ Antara Module validation can accomplish even more to it.<!-- dimxy The Module va
 
 <!-- The above paragraph is out of place. -->
 
-## Antara Module Features 
+~~## Antara Module Features ~~<!-- dimxy maybe remove this heading. It advertises features, but seems not all features are described in 2 next sections
 
 #### Antara Module as Data and Business Logic Layer of Business Application
 
@@ -505,7 +505,7 @@ Sidd: I don't see a reference to audio above? Perhaps you removed it? Fine eithe
 
 Sidd: Is the below a reference to another external layer? Should we make a heading for external layers?
 
---><!-- dimxy I think we actually do not explicitly distinguish layers in Antara modules. I'd they are similar to usual apps in that the data is transactions and business logic is module's c++ code, to make the architecture more understanable for developers, by comparison.   -->
+--><!-- dimxy I think we actually do not explicitly distinguish layers in Antara modules. I'd say Antara modules are similar to usual apps in that the data is transactions and business logic is module's c++ code, to make the modules architecture more understandable for developers, by comparison. Maybe better not to emphasize this  -->
 
 Also, there can often be an additional oracle layer, wherein oracle software connects nodes to external data sources across the Internet. This can be the case in Antara-based software applications that make use of the [<b>Oracles</b>](../basic-docs/fluidity/fluidity-api/oracles.html#introduction) Antara module. 
 
