@@ -475,9 +475,9 @@ Even the basic CryptoCondition features offer more complex logical expressions t
 
 As logical conditions and subconditions can be added to a CryptoCondition as desired, the developer can build complex logic that governs the movement of Smart Chain assets. <!--dimxy here we are speaking about basic cryptocoondition lib feature, not the arbitrary module validation code. So this phrase is attached to the previous where it is said that basic cryptocondition features allows to build logic expressions on signatures and keys.  --> In this sense, Antara is an advanced evolution of the basic Bitcoin Script security features, such as pubkey or pubkey hash scripts.
 
-Antara Module validation can accomplish even more to it.<!-- dimxy The Module validation (also called arbitrary code above) can do things more advanced than basic cryptocondition-->  We will examine this possibility further on in the tutorial. <!-- dimxy maybe that section 'Antara Extensions to CryptoConditions' above to put after the current section as it describes more about the arbitrary validation? -->
+Antara Module validation can accomplish even more to it.<!-- dimxy The Module validation (also called arbitrary code above) can do things more advanced than basic cryptocondition-->  We will examine this possibility further on in the tutorial. <!-- dimxy maybe that upper section 'Antara Extensions to CryptoConditions' to put after the current section as it describes more about the arbitrary validation? -->
 
-~~In this section, we became acquainted with the concept of logical conditions that are associated with transaction outputs, and logical fulfillments associated with spending-transactions. These two elements make up the rudimentary aspect of a CryptoCondition.~~<!--dimxy moved up where we are speaking about crytpocondtions
+~~In this section, we became acquainted with the concept of logical conditions that are associated with transaction outputs, and logical fulfillments associated with spending-transactions. These two elements make up the rudimentary aspect of a CryptoCondition.~~<!--dimxy moved up, where we are speaking about cryptocondtions -->
 
 <!-- Sidd: I'll need to go over the above again. Making my brain melt for some reason. -->
 
@@ -485,7 +485,7 @@ Antara Module validation can accomplish even more to it.<!-- dimxy The Module va
 
 <!-- The above paragraph is out of place. -->
 
-~~## Antara Module Features ~~<!-- dimxy maybe remove this heading. It advertises features, but seems not all features are described in 2 next sections
+~~## Antara Module Features ~~<!-- dimxy maybe remove this heading. It advertises features, but seems only small part of features is described in 2 next sections -->
 
 #### Antara Module as Data and Business Logic Layer of Business Application
 
@@ -1381,7 +1381,7 @@ One way to invoke validation for the first transaction when performing the secon
 
 #### Guidelines for Validation
 
-In our Heir module prototype, we have three transactions to validate: the initial funding, the transaction that adds more value, and the transaction that claims the funds. The first and second of these transactions do not have any CC vins, and therefore all are validated together with the transaction that claims the funds.
+In our Heir module prototype, we have three transactions to validate: the initial funding, the adding transaction that adds more funds, and the transaction that claims the funds. The first and second of these transactions do not have any CC vins, and therefore all are validated together with the transaction that claims the funds.
 
 Here are several common aspects of a module that require validation:
 
@@ -1392,13 +1392,13 @@ Here are several common aspects of a module that require validation:
 - Avoid all foreseeable attack vectors
   - Ensure DOS attacks are eliminated, especially in the event of a malformed transaction
   - Check the array size before use of any transaction 
-- Check the initial transaction for this transaction <!-- not clear what "this transaction" refers to --> by retrieving the txid from the OP_RETURN and loading the initial transaction
+- Check the previous Heir module transactions which this transaction spends and which have no cc inputs <!-- not clear what "this transaction" refers to --><!-- dimxy rephrased. It is important to check previous tx, with no cc vins, as such tx bypassed module's validation when they were added to the chain. So we need to recall and validate them after, when they are being spent --> by retrieving the txid from the OP_RETURN and loading and validating the previous transaction
 
 #### Heir Module Validations
 
 The following are the aspects of validation the Heir module requires. 
 
-- The funding transaction <!-- This is the same as the "initial" transaction, correct? -->
+- The inital funding transaction <!-- This is the same as the "initial" transaction, correct? --><!--dimxy yes-->
   - Validate that the `1of2` address accurately matches `pubkeys` in the OP_RETURN
 - The spending transaction <!-- This is the same as the "claim" transaction, correct? -->
   - Validate the txid <!-- should ID be plural? --> in the OP_RETURNS and OP_RETURN of the transaction spent (`vintx`) <!-- I've never heard of a vintx? --> which binds the transaction to the contract instance data, so the txids should be equal to the initial txid. <!-- I don't understand this well enough to edit. -->
@@ -1410,11 +1410,11 @@ The following are the aspects of validation the Heir module requires.
     - Therefore, when validating, for each utxo contained in the `1of2` address, calculate whether or not the utxo's vins contain the owner's pubkey
 - During the course of validation, we fully check opreturn format
 
-To activate the `HeirValidate()` function for the Heir module `EVAL` code <!-- Are we talking about what is happening in the daemon here? -->
+~~To activate the `HeirValidate()` function for the Heir module `EVAL` code ~~<!-- Are we talking about what is happening in the daemon here? -->
 
-<!-- Do we not see in the tutorial what is happening in the below sentence? Can we, if not? Not fully clear. I need to re-read first, probably. -->
-
-(?), we followed JL's 'Mastering Cryptocondition' book instructions while we added a new cc contract to the system's code. (?)
+<!-- Do we not see in the tutorial what is happening in the below sentence? Can we, if not? Not fully clear. I need to re-read first, probably. --><!-- dimxy it is like a reminder to reader how HeirValidation() function is invoked, rephased: -->
+~~(?), we followed JL's 'Mastering Cryptocondition' book instructions while we added a new cc contract to the system's code. (?)~~
+This validation logic is performed in HeirValidate() function which is invoked by the extension to the Komodod consensus mechanism when Antara module transaction with EVAL_HEIR is its cryptocondition inputs is added to the chain.
 
 #### HeirValidate() Implementation
 
