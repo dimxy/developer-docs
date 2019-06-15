@@ -408,11 +408,11 @@ Another important concept to understand is the nature of a <b>CryptoCondition</b
 
 A CryptoCondition is a logical expression evaluated on electronic signatures and hashes of transaction data. CryptoConditions are stored in the scripts of transactions and are evaluated by a supporting CryptoCondition C library. The default CC library is included during the installation procedure of a Smart Chain. 
 
-#### Antara Extensions to CryptoConditions<!-- dimxy changed. was: 'Importance of CC'. But not only arbitrary code mentioned here is important. Maybe send this paragraph further-->
+#### Antara Extensions to CryptoConditions<!-- dimxy changed. Was: 'Importance of CC'. But not only arbitrary code mentioned here is important. Maybe send this paragraph further as it is about extensions -->
 
 In addition to the industry-standard CryptoCondition (CC) library, Komodo's implementation of CC integrates the ability to add arbitrary code into a Smart Chain's consensus mechanism. This allows developers to create essentially an unlimited number of application-specific transaction-validation rules. 
 
---For example, in the Heir module the developer adds a check as to whether the receiver of an Heir fund has received funds previously. If this is false, the developer runs all other validation code. However, if this is true, the developer allows the module to ignore all other validation logic, as there is no need to check the same validation logic twice, once successfully passed.--<!-- dimxy this is not quite clear. why should it ignore other validation logic? Suggestion to replace:-->
+~~For example, in the Heir module the developer adds a check as to whether the receiver of an Heir fund has received funds previously. If this is false, the developer runs all other validation code. However, if this is true, the developer allows the module to ignore all other validation logic, as there is no need to check the same validation logic twice, once successfully passed.~~<!-- dimxy this is not quite clear. why should it ignore other validation logic? Suggestion to replace:-->
 For example, in the Heir Module if the heir is claiming funds, there is a check in the validation code as to whether the owner of the Heir Module's fund has had activity for the specified period of time like adding or spending funds. If the owner had no such activity, the validation code allows the heir to receive the claimed funds.
 
 Through CryptoConditions and Antara's extensions, the consensus mechanism can rule over the outcome of the cryptocondition logic and arbitrary validation code across the Smart Chain's decentralized network of nodes.
@@ -439,9 +439,9 @@ The <b>fulfillment</b> (Part II) contains instructions and data about how the co
 
 To spend a transaction CryptoCondition output, first a node on the network must send a spending transaction which provides a fulfillment in its input for this CryptoCondition. <!--dimxy moved here form the bottom, seems this looks more logically here -->
 When a transaction with a CryptoCondition input spends another transaction's CryptoCondition output, the consensus mechanism validates the fulfillment in the input and checks that it matches the condition in the output. 
-For our electronic signature example above, the validation logic first verifies the electronic signature with the provided pubkey. Then the validation logic calculates the fingerprint of the pubkey and checks it against the condition.
-<!-- dimxy I added about eval code here as I put here a diagram that tries to highlight Antara module validation in both aspects cryptocondition and arbitrary code (which is triggered by the eval code in cc input). So I need to mention it here too -->
-Also there is an Antara's extension to CryptoConditions, a special 'eval' cryptocondition that is an number bound to a specific Antara's module. When the validation logic founds the Antara's module eval code in the spending transaction input it calls Module's Validate function.
+For our electronic signature example above, the consensus mechanism (more precisely, the CryptoCondition part added to it) first verifies the electronic signature with the provided pubkey. Then the validation logic calculates the fingerprint of the pubkey and checks it against the condition.
+<!-- dimxy I added some about eval code here as I put here a diagram that tries to highlight Antara module validation in both aspects cryptocondition and arbitrary code (which is triggered by the eval code in cc input). So I need to mention it here too -->
+Also there is an Antara's extension to CryptoConditions, a special 'eval' cryptocondition that is a number assigned to each Antara's module. When the consensus validation logic founds the Antara's module eval code in the spending transaction input it calls Module's Validate function.
 
 The process of validation of Antara Module's transactions is depicted on the diagram below:
 <div style="clear: both; margin-top: 1rem; margin-bottom: 1rem; float: right; display: block;">
@@ -459,7 +459,7 @@ A fulfillment is validated by evaluating that the circuit output is TRUE but als
 So a spending tx must fulfill the condition in the tx that it spends.
 With this in mind I suggest corrections (see above) -->
 
-The consensus mechanism uses the C library to evaluate the fulfillment of the spending transaction. The result of this evaluation is checked against the condition stored in the transaction output. 
+The consensus mechanism uses the C CryptoCondition library to evaluate the fulfillment of the spending transaction. The result of this evaluation is checked against the condition stored in the transaction output. 
 
 #### The Simplest form of a CryptoCondition
 
@@ -467,21 +467,21 @@ The simplest CryptoCondition evaluates an electronic signature of a spending-tra
 
 At first glance, you may be confused about why a CryptoCondition is useful in this event, as a normal blockchain protocol can already accomplish this task. 
 
-The answer is that there is an important difference in the CryptoCondition implementation. When a CryptoCondition transaction output is spent, the Antara module's code can enforce additional validation logic.
+The answer is that there is an important difference in the CryptoCondition implementation. When a CryptoCondition transaction output is spent, the Antara module's code can enforce additional validation logic. This is accomplished via an element called the `EVAL` code which is stored in the CryptoCondition's inputs and outputs. It will be described more in Heir Module development section.
 
-This key difference illuminates the power of Antara. For example, additional arbitrary module code could include validation logic that allows a user to spend the output only at the appropriate time. The transaction output is spend only once an attempting spending-transaction has the matching fulfillment, and both the CryptoCondition and the Antara module validation code evaluate to `true`.
+This key difference illuminates the power of Antara. For example, additional arbitrary module validation code could include validation logic that allows a user to spend the output only at the appropriate time. The transaction output is spend only once an attempting spending-transaction has the matching fulfillment, and both the CryptoCondition and the Antara module validation code evaluate to `true`.
 
 Even the basic CryptoCondition features offer more complex logical expressions than a normal Bitcoin script. For example, with CC a spending transaction could be required to have signatures from at least `M` of `N` acceptable `pubkeys`.
 
-Antara Module validation can accomplish more to it.<!-- dimxy Module validation (what is called arbitrary code above) can do things more advanced than basic cryptocondition-->  We will examine this possibility further on in the tutorial.
+As logical conditions and subconditions can be added to a CryptoCondition as desired, the developer can build complex logic that governs the movement of Smart Chain assets. <!--dimxy here we are speaking about basic cryptocoondition lib feature, not the arbitrary module validation code. So this phrase is attached to the previous where it is said that basic cryptocondition features allows to build logic expressions on signatures and keys.  --> In this sense, Antara is an advanced evolution of the basic Bitcoin Script security features, such as pubkey or pubkey hash scripts.
 
-As logical conditions and subconditions can be added to a CryptoCondition as desired, the developer can build complex logic that governs the movement of Smart Chain assets. In this sense, Antara is an advanced evolution of the basic Bitcoin Script security features, such as pubkey or pubkey hash scripts. 
+Antara Module validation can accomplish even more to it.<!-- dimxy The Module validation (also called arbitrary code above) can do things more advanced than basic cryptocondition-->  We will examine this possibility further on in the tutorial.
 
-In this section, we became acquainted with the concept of logical conditions that are associated with transaction outputs, and logical fulfillments associated with spending-transactions. These two elements make up the rudimentary aspect of a CryptoCondition.
+~~In this section, we became acquainted with the concept of logical conditions that are associated with transaction outputs, and logical fulfillments associated with spending-transactions. These two elements make up the rudimentary aspect of a CryptoCondition.~~<!--dimxy moved up where we are speaking about crytpocondtions
 
 <!-- Sidd: I'll need to go over the above again. Making my brain melt for some reason. -->
 
-There are yet other elements of an Antara-based CryptoCondition. One element is called the `EVAL` code, and it is stored in the CryptoCondition's inputs and outputs. We will touch on this topic soon. 
+~~There are yet other elements of an Antara-based CryptoCondition. One element is called the `EVAL` code, and it is stored in the CryptoCondition's inputs and outputs. We will touch on this topic soon.~~ <!---dimxy I moved it up -->
 
 <!-- The above paragraph is out of place. -->
 
