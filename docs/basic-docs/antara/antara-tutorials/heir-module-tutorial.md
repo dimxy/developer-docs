@@ -302,7 +302,7 @@ Taking the value in the fully encoded key-value pair, `hex`, here is an approxim
 | Translation | Hex Value |
 | ----------- | --------- |
 | 6a | OP_RETURN |
-| 4c85 | Length of the data string |
+| 4c85 | Encoded length of the following data | <!-- dimxy it is encoded in the smart bitcoin variable length format, not directly readable. And it is not a string -->
 | ea | Stands for "EVAL_HEIR". The eval code here tells the daemon that this is an Antara module, and that the specific module is HEIR |
 | 46 | Stands for "F", which is a letter marker to indicate that this Heir transaction is a "Funding" transaction |
 | 210... | The remaining portion of the hex encoded data is not related to the core software, but rather to the arbitrary data designed by the developer. Maximum data length is 10000 bytes |
@@ -408,11 +408,12 @@ Another important concept to understand is the nature of a <b>CryptoCondition</b
 
 A CryptoCondition is a logical expression evaluated on electronic signatures and hashes of transaction data. CryptoConditions are stored in the scripts of transactions and are evaluated by a supporting CryptoCondition C library. The default CC library is included during the installation procedure of a Smart Chain. 
 
-#### Antara Extensions to CryptoConditions<!-- dim changed. was: Importance of CC. But not only arbitrary code is important. Maybe send this paragraph further-->
+#### Antara Extensions to CryptoConditions<!-- dimxy changed. was: 'Importance of CC'. But not only arbitrary code mentioned here is important. Maybe send this paragraph further-->
 
 In addition to the industry-standard CryptoCondition (CC) library, Komodo's implementation of CC integrates the ability to add arbitrary code into a Smart Chain's consensus mechanism. This allows developers to create essentially an unlimited number of application-specific transaction-validation rules. 
 
-For example, in the Heir module the developer adds a check as to whether the receiver of an Heir fund has received funds previously. If this is false, the developer runs all other validation code. However, if this is true, the developer allows the module to ignore all other validation logic, as there is no need to check the same validation logic twice, once successfully passed.<!-- dimxy this is strange. why should it ignore other validation logic? -->
+--For example, in the Heir module the developer adds a check as to whether the receiver of an Heir fund has received funds previously. If this is false, the developer runs all other validation code. However, if this is true, the developer allows the module to ignore all other validation logic, as there is no need to check the same validation logic twice, once successfully passed.--<!-- dimxy this is not quite clear. why should it ignore other validation logic? Suggestion to replace:-->
+For example, in the Heir Module if the heir is claiming funds, there is a check in the validation code as to whether the owner of the Heir Module's fund has had activity for the specified period of time like adding or spending funds. If the owner had no such activity, the validation code allows the heir to receive the claimed funds.
 
 Through CryptoConditions and Antara's extensions, the consensus mechanism can rule over the outcome of the cryptocondition logic and arbitrary validation code across the Smart Chain's decentralized network of nodes.
 
