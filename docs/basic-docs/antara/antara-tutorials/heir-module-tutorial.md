@@ -571,7 +571,7 @@ sidd: how do I change the surrounding content to accommodate what you mention ab
 
 <div style="clear: both; margin-top: 1rem; margin-bottom: 1rem; float: right; display: block;">
 
-<img src="https://github.com/dimxy/images/blob/master/CC-Antara-arch-v2.1.png" style="border: 0.5rem solid white; margin: 1rem 0rem 1rem 0rem;" ><!-- dimxy it is temp location for pictures, to how they look. We'll move them to the site repo when we agree about them   -->
+<img src="https://github.com/dimxy/images/blob/master/CC-Antara-arch-v2.2.png" style="border: 0.5rem solid white; margin: 1rem 0rem 1rem 0rem;" ><!-- dimxy it is temp location for pictures, to how they look. We'll move them to the site repo when we agree about them   -->
 
 </div>
 
@@ -700,7 +700,7 @@ The initial funds are taken from the normal `vout` values of a utxo. The initial
 
 The main funds for the plan are allocated to `vout.0` of our CC transaction. 
 
-By design, and setting aside issues of timing, we desire that either the owner or the inheritor of the funds should be able to spend this utxo. We assume that the owner has one address, and the inheritor has another. To achieve this, we use an advanced CryptoConditions feature that states that either of two addresses can spend the funds. This is called a `1of2` CryptoCondition, and it is placed as a logical condition for (?) `vout.0 (?) or the OP_RETURN? vout.n-1`.
+By design, and setting aside issues of timing, we desire that either the owner or the inheritor of the funds should be able to spend this utxo. We assume that the owner has one address, and the inheritor has another. To achieve this, we use an advanced CryptoConditions feature that states that either of two addresses can spend the funds. This is called a `1of2` CryptoCondition, and it is placed as a logical condition into vout.0 ~~for (?) `vout.0 (?)~~ or the OP_RETURN? vout.n-1`.~~ <!-- dimxy corrected -->
 
 A fee is allocated to `vout.1`. This is used as a marker. The marker allows a developer to use a special SDK function, `SetCCunspents()`, to create a list of all initial transactions for the module. 
 
@@ -783,7 +783,7 @@ We model the syntax as follows:
 
 To add a new command to `komodo-cli` we open the `src/server.cpp` source file add a new element to the `vRPCCommands` array.
 
-```json
+```cpp
     { "heir",       "heirfund",   &heirfund,      true },
 ```
 
@@ -794,17 +794,17 @@ To add a new command to `komodo-cli` we open the `src/server.cpp` source file ad
 | &heirfund | the address of the rpc interface function |
 | true | indicates that the command description will be shown in the help command output; placing `false` here would hide this RPC from the help menu |
 
-#### Add the RPC Function Definition
+#### Add the RPC Function ~~Definition~~Declaraion
 
-We add the RPC function definitnion in the `rpc/server.h` source file. 
+We add the RPC function declaration in the `rpc/server.h` source file. 
 
 The declaration in this file is essentially the same across all RPC functions.
 
 ```cpp
-UniValue heirfund(const UniValue& params, bool fHelp)
+UniValue heirfund(const UniValue& params, bool fHelp);
 ```
 
-#### The Two Levels of an RPC Implementation
+### The Two Levels of an RPC Implementation
 
 There are two levels to an RPC implementation.
 
@@ -882,11 +882,13 @@ Finally, call the Heir module code, pass our values (now in C++ type format), an
 ```
 
 <!-- there should be a link here to the completed file. -->
+See this in the source code: https://github.com/dimxy/komodo/blob/heir-simple/src/wallet/rpcwallet.cpp#L7740 <!-- dimxy maybe not to add line number as it might change.. ->
 
-#### Second Level Implementation
+### Second Level Implementation <!-- dimxy it is better to make it one level up as it includes the following next sections, till the heir claim section -->
 
-The second level of the RPC implementation is the transaction creation code. This resides in the `src/heir.cpp` <!-- or src/cc/heir.cpp ? --> source file.
+The second level of the RPC implementation is the transaction creation code. This resides in the `src/cc/heir.cpp` <!-- or src/cc/heir.cpp ? --> source file.
 
+#### Implementing heirfund transaction creation 
 The following content displays the skeleton of the <b>heirfund</b> RPC implementation. 
 
 [For links to the full source code and example files, click here.](../../../basic-docs/antara/antara-tutorials/heir-module-tutorial.html#links-to-heir-source-code-and-building-instructions)
@@ -1400,7 +1402,7 @@ The following are the aspects of validation the Heir module requires.
 
 - The inital funding transaction <!-- This is the same as the "initial" transaction, correct? --><!--dimxy yes-->
   - Validate that the `1of2` address accurately matches `pubkeys` in the OP_RETURN
-- The spending transaction <!-- This is the same as the "claim" transaction, correct? -->
+- The ~~spending~~ claiming transaction <!-- This is the same as the "claim" transaction, correct? -->
   - Validate the txid <!-- should ID be plural? --> in the OP_RETURNS and OP_RETURN of the transaction spent (`vintx`) <!-- I've never heard of a vintx? --> which binds the transaction to the contract instance data, so the txids should be equal to the initial txid. <!-- I don't understand this well enough to edit. -->
 - Validate whether the heir is allowed to spend the funds
   - Check whether the flag indicates that the Heir is already spending the funds
@@ -1460,9 +1462,9 @@ There is no need to check the function ids of the (`F`) funding transaction or t
         return eval->Invalid("incorrect or no opreturn data");  // note that you should not return simply 'false'
 ```
 
-<!-- Need help to parse the sentence below. -->
+<!-- Need help to parse the sentence below. --><!-- dimxy extended -->
 
-Decode the transaction's opreturn. The `fundingtxid` is the txid of the initial transaction of this instance of the Heir module.
+Decode the transaction's opreturn with E_UNMARSHAL function which places the opreturn serialized data into several variables. One of them, the `fundingtxid` variable is the txid of the initial funding transaction. We will use it further to find the latest owner transaction to check when the owner was last active on the chain.  
 
 ```cpp
     uint8_t evalcode, funcId;
@@ -1473,7 +1475,7 @@ Decode the transaction's opreturn. The `fundingtxid` is the txid of the initial 
         return eval->Invalid("incorrect opreturn data");
 ```
 
-Check that the `fundingtxid` is correctly parsed:
+Check that the `fundingtxid` is valid txid:
 
 ```cpp
     if( fundingtxid.IsNull() )
