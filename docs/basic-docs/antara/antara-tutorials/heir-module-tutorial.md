@@ -168,7 +168,7 @@ Observe the following transaction data structure for the existing Heir module:
 
 <collapse-text hidden="true" style="margin-top: 1rem;" title="Full Response">
 
-```json
+```jsonc
 {
   "txid": "9307989767c1d10b3c97834c7e9f50583387907848bc9776b4b77a705791864c",
   "overwintered": false,
@@ -430,17 +430,22 @@ A CryptoCondition consists of two parts:
 
 What is "fingerprinted" form? Hashed? 
 
--->
+--><!-- dimxy 'fingeprint' is a term used in the cryptocondition library. When it 'fingerprints' a condition, the lib fetches some key parameters from it and yes, hashes them. For example the source of electronic signature cryptocondition has pubkey and signature value. To get the fingerprint of it, the lib takes only pubkey and hashes it   -->
 
 The <b>condition</b> (Part I) contains data that checks the CryptoCondition in fingeprinted form. For example, a condition can be a requirement that only a specific `pubkey` (fingerprinted) be allowed to spend this transaction output.
 
 The <b>fulfillment</b> (Part II) contains instructions and data about how the consensus mechanism should evaluate the CryptoCondition. For example, the fulfillment could include an instruction to check a spending-transaction's electronic signature as well as the the `pubkey` associated with this signature.
 
-To evaluate the fulfillment of this CryptoCondition, the validation logic would first verify the electronic signature with the provided pubkey. Then the validation logic would use the pubkey to calculate the fingerprint of the result and check it against the condition.
+To spend a transaction CryptoCondition output, first a node on the network must send a spending transaction which provides a fulfillment in its input for this CryptoCondition. <!--dimxy moved here, seems this looks more logically here -->
+When a transaction with a CryptoCondition input spends another transaction CryptoCondition output, the consensus mechanism validates the fulfillment in the input and checks that it matches condition. For our example validation logic would first verify the electronic signature with the provided pubkey. Then the validation logic calculates the fingerprint of the pubkey and checks it against the condition.
 
-<!-- Language above wasn't clear. Tried to fix as best as I can. I don't fully understand what a fingerprint is, so I don't know what this is referring to specifically. -->
-
-To spend a transaction CryptoCondition output, first a node on the network must send a spending transaction which provides a fulfillment in its input for this CryptoCondition. 
+<!-- Language above wasn't clear. Tried to fix as best as I can. I don't fully understand what a fingerprint is, so I don't know what this is referring to specifically. --><!-- Actually there is no a separated fulfillment evaluation. There is always evaluation of the fulfillment in spending tx and checking the condition in the tx being spent. That's why I wrote 'So to evaluate this CryptoCondition..'.
+Seems this is confusing (with fulfillment evaluation). Here is how the standard says:
+'A condition uniquely identifies a logical "boolean circuit"... 
+A fulfillment is a data structure encoding one or more cryptographic signatures and hash digest preimages that define the structure of the circuit and provide inputs to the logic gates allowing for the result of the circuit to be evaluated.
+A fulfillment is validated by evaluating that the circuit output is TRUE but also that the provided fulfillment matches the circuit    fingerprint, the condition.' 
+So a spending tx must fulfill the condition in the tx that it spends.
+With this I suggest corrections (see above) -->
 
 The consensus mechanism uses the C library to evaluate the fulfillment of the spending transaction. The result of this evaluation is checked against the condition stored in the transaction output. 
 
@@ -482,7 +487,7 @@ dimxy3 why audio?
 
 Sidd: I don't see a reference to audio above? Perhaps you removed it? Fine either way.
 
---> 
+--> <!-- dimxy yes, 'audio' looks like not relevant very much to blockchains -->
 
 <!--
 
@@ -554,7 +559,7 @@ sidd: how do I change the surrounding content to accommodate what you mention ab
 
 <div style="clear: both; margin-top: 1rem; margin-bottom: 1rem; float: right; display: block;">
 
-<img src="/CC-Antara-arch-v1.0.1.png" style="border: 0.5rem solid white; margin: 1rem 0rem 1rem 0rem;" >
+<img src="https://github.com/dimxy/images/blob/master/CC-Antara-arch-v2.1.png" style="border: 0.5rem solid white; margin: 1rem 0rem 1rem 0rem;" ><!-- dimxy it is temp location for pictures, to how they look. We'll move them to the site repo when we agree about them   -->
 
 </div>
 
@@ -566,11 +571,11 @@ The first part of the Antara's module source file consists of the implementation
 
 The developer must also implement high-level functions for any desired RPC commands that are called by the RPC engine and are responsible for converting the RPC data to native C++ data types. 
 
-These functions should be added into an existing source in the `/src/rpc` directory. Alternatively, the developer might create their own RPC source file.
+These functions should be added into an existing source in the `/src/rpc` directory. Alternatively, the developer might create his own RPC source file.
 
-A reference to the RPC-command functions should be added to the global RPC command table in the `/server.cpp` source file.
+A reference to the RPC-command functions should be added to the global RPC command table in the `/src/rpc/server.cpp` source file.
 
-<!-- Is the server.cpp file in the root dir? -->
+<!-- Is the server.cpp file in the root dir? --><!-- dimxy it is in rpc subdir, corrected -->
 
 With this properly completed, the Smart Chain daemon's compiler will automatically make each RPC available at the command line through the `komodo-cli` software and via the `curl` utility.
 
@@ -584,17 +589,17 @@ Essentially all modules have at least these two RPC's.
 
 Include other RPC implementations as desired.
 
-#### Validation Code
+#### Antara Module Validation Code
 
-The main purpose of validation code is to prevent inappropriate spending transactions in an Antara module, and to ensure that the structure of the chain of transactions and their data is accurate. Most importantly, validation vode should protect against malicious spending transactions.
+The main purpose of Antara Module validation code is to prevent inappropriate spending transactions in an Antara module to be added to the chain, and to ensure that the structure of the chain of Module's transactions and their data is accurate. Most importantly, validation vode should protect against malicious spending transactions.
 
 <!-- 
 
 Sidd: I rephrased above paragraph. Please check accruacy.
 
--->
+--><!-- dimxy I corrected this a bit -->
 
-Validation code is triggered anytime a node attempts a spending-transaction that should be added to the module's chain of CC transactions.
+Antara Module Validation code is triggered anytime a node attempts to add a CC spending-transaction the chain. <!-- dimxy I think it is not very good  to use 'added to the module's chain' expression. Actually cc transactions are added to the common chain of blocks. If to understand here a logical chain of cc tx (which actually does exist), it probably sounds ambiguous and might confuse some readers -->
 
 A module's validation code is activated only when a transaction has at least one CC input that bears the module's `EVAL` code inside the <b>scriptSig</b> of the (transaction output?).
 
