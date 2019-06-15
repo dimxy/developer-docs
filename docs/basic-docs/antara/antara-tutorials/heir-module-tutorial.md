@@ -408,11 +408,11 @@ Another important concept to understand is the nature of a <b>CryptoCondition</b
 
 A CryptoCondition is a logical expression evaluated on electronic signatures and hashes of transaction data. CryptoConditions are stored in the scripts of transactions and are evaluated by a supporting CryptoCondition C library. The default CC library is included during the installation procedure of a Smart Chain. 
 
-#### The Importance of CryptoConditions
+#### Antara Extensions to CryptoConditions<!-- dim changed. was: Importance of CC. But not only arbitrary code is important. Maybe send this paragraph further-->
 
 In addition to the industry-standard CryptoCondition (CC) library, Komodo's implementation of CC integrates the ability to add arbitrary code into a Smart Chain's consensus mechanism. This allows developers to create essentially an unlimited number of application-specific transaction-validation rules. 
 
-For example, in the Heir module the developer adds a check as to whether the receiver of an Heir fund has received funds previously. If this is false, the developer runs all other validation code. However, if this is true, the developer allows the module to ignore all other validation logic, as there is no need to check the same validation logic twice, once successfully passed.
+For example, in the Heir module the developer adds a check as to whether the receiver of an Heir fund has received funds previously. If this is false, the developer runs all other validation code. However, if this is true, the developer allows the module to ignore all other validation logic, as there is no need to check the same validation logic twice, once successfully passed.<!-- dimxy this is strange. why should it ignore other validation logic? -->
 
 Through CryptoConditions and Antara's extensions, the consensus mechanism can rule over the outcome of the cryptocondition logic and arbitrary validation code across the Smart Chain's decentralized network of nodes.
 
@@ -440,11 +440,12 @@ To spend a transaction CryptoCondition output, first a node on the network must 
 When a transaction with a CryptoCondition input spends another transaction's CryptoCondition output, the consensus mechanism validates the fulfillment in the input and checks that it matches the condition in the output. 
 For our electronic signature example above, the validation logic first verifies the electronic signature with the provided pubkey. Then the validation logic calculates the fingerprint of the pubkey and checks it against the condition.
 <!-- dimxy I added about eval code here as I put here a diagram that tries to highlight Antara module validation in both aspects cryptocondition and arbitrary code (which is triggered by the eval code in cc input). So I need to mention it here too -->
-Also there is an Antara's extension to CryptoConditions, a special 'eval' cryptocondition which is an identificator bound to a specific Antara's module. When the validation code founds the Antara's module eval code in the spending transaction input it calls Module's Validate function.
+Also there is an Antara's extension to CryptoConditions, a special 'eval' cryptocondition that is an number bound to a specific Antara's module. When the validation logic founds the Antara's module eval code in the spending transaction input it calls Module's Validate function.
+
 The process of validation of Antara Module's transactions is depicted on the diagram below:
 <div style="clear: both; margin-top: 1rem; margin-bottom: 1rem; float: right; display: block;">
 
-<img src="https://github.com/dimxy/images/blob/master/cc-verify-work-v2.3.png" style="border: 0.5rem solid white; margin: 1rem 0rem 1rem 0rem;" ><!-- dimxy it is temp location for pictures, to how they look. We'll move them to the site repo when we agree about them   -->
+<img src="https://github.com/dimxy/images/blob/master/cc-verify-work-v2.3.png" style="border: 0.5rem solid white; margin: 1rem 0rem 1rem 0rem;" ><!-- dimxy it is temp location for pictures, to how they look. We'll move them to the doc site repo when we agree about them   -->
 
 </div>
 
@@ -471,7 +472,7 @@ This key difference illuminates the power of Antara. For example, additional arb
 
 Even the basic CryptoCondition features offer more complex logical expressions than a normal Bitcoin script. For example, with CC a spending transaction could be required to have signatures from at least `M` of `N` acceptable `pubkeys`.
 
-Application validation can accomplish this as well. We will examine this possibility further on in the tutorial.
+Antara Module validation can accomplish more to it.<!-- dimxy Module validation (what is called arbitrary code above) can do things more advanced than basic cryptocondition-->  We will examine this possibility further on in the tutorial.
 
 As logical conditions and subconditions can be added to a CryptoCondition as desired, the developer can build complex logic that governs the movement of Smart Chain assets. In this sense, Antara is an advanced evolution of the basic Bitcoin Script security features, such as pubkey or pubkey hash scripts. 
 
@@ -485,11 +486,11 @@ There are yet other elements of an Antara-based CryptoCondition. One element is 
 
 ## Antara Module Features 
 
-#### Two Layers to Each Module
+#### Antara Module as Data and Business Logic Layer of Business Application
 
 An Antara module can be described as a combination of a data layer and a business-logic layer in an application. The data layer is the collection of transactions related to the Antara module, and the business-logic layer is the modules arbitrary code.
 
-These two layers tie in with other layers in an Antara-based software application. For example, the software external to the blockchain could include a presentation layer, consisting of a Graphical User Interface (GUI) and other visual elements. 
+These two layers tie in with other layers in an Antara-based software application. For example, the software external to the blockchain could include a presentation layer, consisting of a Graphical User Interface (GUI) and other visual elements. External applications interact with an Antara Module via its rpc calls.  
 
 <!--
 
@@ -503,9 +504,9 @@ Sidd: I don't see a reference to audio above? Perhaps you removed it? Fine eithe
 
 Sidd: Is the below a reference to another external layer? Should we make a heading for external layers?
 
---><!-- dimxy I think we actually do not explicitly distinguish layers in Antara modules. I'd they are similar to usual apps in that the data is transactions and business logic is module's c++ code, to make the architecture more understanable for developers, by comparison  -->
+--><!-- dimxy I think we actually do not explicitly distinguish layers in Antara modules. I'd they are similar to usual apps in that the data is transactions and business logic is module's c++ code, to make the architecture more understanable for developers, by comparison.   -->
 
-Also, there can often be an oracle layer, wherein oracle software connects nodes to external data sources across the Internet. This can be the case in Antara-based software applications that make use of the [<b>Oracles</b>](../basic-docs/fluidity/fluidity-api/oracles.html#introduction) Antara module. 
+Also, there can often be an additional oracle layer, wherein oracle software connects nodes to external data sources across the Internet. This can be the case in Antara-based software applications that make use of the [<b>Oracles</b>](../basic-docs/fluidity/fluidity-api/oracles.html#introduction) Antara module. 
 
 #### A Global CC Address in the Antara Framework
 
