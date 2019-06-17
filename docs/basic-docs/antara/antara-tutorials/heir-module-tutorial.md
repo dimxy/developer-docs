@@ -571,7 +571,7 @@ sidd: how do I change the surrounding content to accommodate what you mention ab
 
 <div style="clear: both; margin-top: 1rem; margin-bottom: 1rem; float: right; display: block;">
 
-<img src="https://github.com/dimxy/images/blob/master/CC-Antara-arch-v2.2.png" style="border: 0.5rem solid white; margin: 1rem 0rem 1rem 0rem;" ><!-- dimxy it is temp location for pictures, to how they look. We'll move them to the site repo when we agree about them   -->
+<img src="https://github.com/dimxy/images/blob/master/CC-Antara-arch-v2.3.png" style="border: 0.5rem solid white; margin: 1rem 0rem 1rem 0rem;" ><!-- dimxy it is temp location for pictures, to how they look. We'll move them to the site repo when we agree about them   -->
 
 </div>
 
@@ -631,7 +631,7 @@ The `EVAL` code itself is actually a simple CryptoCondition. The CryptoCondition
 
 <div style="clear: both; margin-top: 1rem; margin-bottom: 1rem; float: right; display: block;">
 
-<img style="border: 10px solid white;" src="/cc-tx-structure-for-guide-v7.png">
+<img style="border: 10px solid white;" src="https://github.com/dimxy/images/blob/master/cc-tx-structure-for-guide-v7.png"><!--dimxy6 temp fig location to see how it looks in the doc, to be copied into doc repo in the finished state-->
 
 </div>
 
