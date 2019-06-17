@@ -631,7 +631,7 @@ The `EVAL` code itself is actually a simple CryptoCondition. The CryptoCondition
 
 <div style="clear: both; margin-top: 1rem; margin-bottom: 1rem; float: right; display: block;">
 
-<img style="border: 10px solid white;" src="https://github.com/dimxy/images/blob/master/cc-tx-structure-for-guide-v3.1.png"><!--dimxy6 temp fig location to see how it looks in the doc, to be copied into doc repo in the finished state-->
+<img style="border: 10px solid white;" src="https://github.com/dimxy/images/blob/master/cc-tx-structure-for-guide-v3.2.png"><!--dimxy6 temp fig location to see how it looks in the doc, to be copied into doc repo in the finished state-->
 
 </div>
 
