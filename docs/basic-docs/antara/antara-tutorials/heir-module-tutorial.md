@@ -1183,13 +1183,13 @@ int64_t Add1of2AddressInputs(CMutableTransaction &mtx, uint256 fundingtxid, char
     int32_t count = 0;
 ```
 
-By default, the CC SDK function, `SetCCunspents`, fills the provider vector with a list of unspent outputs of the provided `coinaddr` Bitcoin address.
+By default, the CC SDK function, `SetCCunspents`, fills the provider vector with a list of unspent cc outputs of the provided `coinaddr` Bitcoin address.
 
 For our Heir module, we pass the `1of2` address where the plan's funds are stored.
 
 ```cpp
     std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue>> unspentOutputs;
-    SetCCunspents(unspentOutputs, coinaddr, true);  // get a vector of uxtos for the address in coinaddr[]
+    SetCCunspents(unspentOutputs, coinaddr, true);  // get a vector of cc uxtos for the address in coinaddr[]
 ```
 
 Iterate through the returned uxtos and add those that are appropriate to the transaction's vin array:
@@ -1417,7 +1417,7 @@ The following are the aspects of validation the Heir module requires.
     - Therefore, when validating, for each utxo contained in the `1of2` address, calculate whether or not the utxo's vins contain the owner's pubkey
 - During the course of validation, we fully check opreturn format
 
-~~To activate the `HeirValidate()` function for the Heir module `EVAL` code ~~<!-- Are we talking about what is happening in the daemon here? -->
+~~To activate the `HeirValidate()` function for the Heir module `EVAL` code ~~<!-- Are we talking about what is happening in the daemon here? --><!--dimxy here it is about how to add the Antara module validation function to the komodod consensus code -->
 
 <!-- Do we not see in the tutorial what is happening in the below sentence? Can we, if not? Not fully clear. I need to re-read first, probably. --><!-- dimxy it is like a reminder to reader how HeirValidation() function is invoked, rephased: -->
 ~~(?), we followed JL's 'Mastering Cryptocondition' book instructions while we added a new cc contract to the system's code. (?)~~
@@ -1612,10 +1612,10 @@ Instructions to build the Komodo binaries, including the necessary CC modules, c
 | Antara module | A collection of customized code that a developer adds into the default daemon to add unique functionality, including customized consensus rules and more |
 | CC input | A transaction input, CC encoded. Typically spends value from a CC output |
 | CC output | A transaction output, CC encoded |
+| funding plan | The txid of an Antara Module's initial transaction, it is the identifier for all of the Antara module's CC transactions, related to this funding plan |
 | normal inputs | Inputs spending value from normal transaction outputs (not CC outputs) |
 | normal outputs | Not CC outputs, but normal transaction outputs (pubkey, pubkey hash, etc.) |
 | OP_RETURN, opreturn | A special output in a transaction that holds user and module data. The output is prepended by  an OP_RETURN script opcode and therefore spending from this output is impossible |
-| plan | An instance of an Antara module data. In other words, this is a collection of all CC transactions related to an initial CC transaction, that is itself one instance of an Antara module |
 | tx, txn | Short for "transaction" |
 | txid | Transaction id; a hash of a transaction |
 | unspendable address | The global cc contract address, for which its public and private key are commonly known. This address is used for conditionally sharing funds between contract users. As the address's private key is not a secret, by default anyone can spend value from this address. However, CC validation code often applies business logic conditions and checks to ensure that only transactions that meet the given criteria are actually able to spend funds in this address |
