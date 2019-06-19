@@ -810,11 +810,11 @@ There are two levels to an RPC implementation.
 
 The first level is a short RPC function that has the same name as the RPC command itself (such as `heirfund`).
 
-The body of this level is added to the `rpc/` subdirectory in the source code.
-
-This function checks the RPC parameters and the needed environment, and then forwards the RPC to the second level. 
+The body of this level is added to a source file in the `rpc/` subdirectory in the source code (for this example, we added the rpc functions for Heir module in the wallet/rpcwallet.cpp). 
 
 Creating a new RPC source file for each Antara module's RPC functions is considered a best practice.
+
+This function checks the RPC parameters and the needed environment, and then forwards the RPC to the second level. 
 
 To begin the RPC command, we declare the `heirfund` function and clear the global error object.
 
