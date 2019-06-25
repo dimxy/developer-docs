@@ -569,7 +569,7 @@ As an aside, when the developer needs to write code that validates a spending tr
 
 A unique 8-bit `EVAL` code is attached to each Antara module. The `EVAL` code is used by the core Smart Chain daemon's transaction-validation code to route any relevant transactions to the appropriate module's validation code.
 
-The `EVAL` code itself is actually a simple CryptoCondition. The CryptoCondition tests for the byte value and, if the value is `true`, routes the result according to the core Smart Chain daemon's code.
+The `EVAL` code itself is actually a simple CryptoCondition. The CryptoCondition tests for the byte value and, if the value is `true`<!-- dimxy7 actually it tests not for true, but if such eval cc is present in tx input then core validation code routes to the Antara module associated with this eval code-->, routes the result according to the core Smart Chain daemon's code.
 
 ### Antara Module Transaction Structure
 
@@ -621,7 +621,7 @@ Our tasks are the following:
 
 Sidd: We need to note that the previous advanced tutorial, the rewrite of JL's content, contains instructions for EVAL and global CC addresses.
 
--->
+--><!-- dimxy7 suggestion: for instructions how to add a new eval code and create a global CC address refer to Mastering CryptoConditions, Chapter 2 -->
 
 ### Heir Module Transactions
 
