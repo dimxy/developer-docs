@@ -1640,11 +1640,11 @@ sidd: would you like to rename it and/or add in a separate headline? Feel free t
 -->
 
 ```cpp
-opret = EncodePaymentsMergeOpRet(createtxid);
+// create a public key from a transaction id:
 CPubKey txidpk = CCtxidaddr(txidaddr, createtxid);
-std::vector<std::vector<unsigned char>> vData = std::vector<std::vector<unsigned char>>();
-if ( makeCCopret(opret, vData) )
-    mtx.vout.push_back(MakeCC1of2vout(EVAL_PAYMENTS, inputsum-PAYMENTS_TXFEE, Paymentspk, txidpk, &vData));
+
+// create a cc vout 
+mtx.vout.push_back(MakeCC1of2vout(EVAL_PAYMENTS, inputsum-PAYMENTS_TXFEE, Paymentspk, txidpk));
 GetCCaddress1of2(cp, destaddr, Paymentspk, txidpk);
 CCaddr1of2set(cp, Paymentspk, txidpk, cp->CCpriv, destaddr);
 rawtx = FinalizeCCTx(0, cp, mtx, mypk, PAYMENTS_TXFEE, CScript());
@@ -1656,6 +1656,67 @@ Using a modification to the `IsPaymentsvout` function, we can now spend a `ccvou
 int64_t IsPaymentsvout(struct CCcontract_info *cp, const CTransaction& tx, int32_t v, char *cmpaddr, CScript &ccopret)
 {
     char destaddr[64];
+    if ( getCCopret(tx.vout[v].scriptPubKey, ccopret) )
+    {
+        if ( Getscriptaddress(destaddr, tx.vout[v].scriptPubKey) > 0 && (cmpaddr[0] == 0 || strcmp(destaddr, cmpaddr) == 0) )
+            return(tx.vout[v].nValue);
+    }
+    return(0);
+}
+```
+
+In place of the `IsPayToCryptoCondition()` function we can use the `getCCopret()` function. This latter function is a lower level of the former call, and will return any `vData` appended to the `ccvout` along with a `true`/`false` value that would otherwise be returned by the `IsPayToCryptoCondition()` function.
+
+In validation, we now have a totally different transaction type than the types that are normally available. This new type allows us to have different validation paths for different `ccvouts`, and it allows for multiple `ccvouts` of different types per transaction.
+
+```cpp
+if ( tx.vout.size() == 1 )
+{
+    if ( IsPaymentsvout(cp, tx, 0, coinaddr, ccopret) != 0 && ccopret.size() > 2 && DecodePaymentsMergeOpRet(ccopret, createtxid) )
+    {
+        fIsMerge = true;
+    } else return(eval->Invalid("not enough vouts"));
+}
+```
+
+#### Application data in cryptocondition vout ('cc opret')
+
+With the latest changes to Antara SDK there is a possibility appeared to add application data to cryptocondition output ('cc opret'). This allows more flexibility in creation of Antara Module transactions: as cc output content is hashed and not directly readable, with cc opret it is possible to add some identification data to a cc output to distinguish this vout from other vouts. It is also possible to put any application data to cc vouts instead of the last vout as it was always done before. This allows to have outputs of two or more Antara modules in the same transaction (for example, to make swaps of values between modules or other similar purposes).
+
+An example of cc opret usage is the Payments module, where the `vData` optional parameter in MakeCC1of2vout function is used to append the opreturn data directly to the `ccvout` itself, rather than an actual opreturn as the last `vout` in a transaction. 
+
+```cpp
+std::vector<unsigned char>> opret = EncodePaymentsMergeOpRet(createtxid);  // create Antara module opreturn data
+
+// create a public key from a transaction id as it was made in 'Txidaddress pattern':
+CPubKey txidpk = CCtxidaddr(txidaddr, createtxid);
+
+// create vData opject that will be added to cc vout:
+std::vector<std::vector<unsigned char>> vData = std::vector<std::vector<unsigned char>>();
+
+// Put the opreturn into vData object:
+if ( makeCCopret(opret, vData) )  {
+    // pass vData object as the last parameter in MakeCC1of2vout:
+    mtx.vout.push_back(MakeCC1of2vout(EVAL_PAYMENTS, inputsum-PAYMENTS_TXFEE, Paymentspk, txidpk, &vData));
+}
+    
+// some other stuff to prepare the transaction for signing:    
+GetCCaddress1of2(cp, destaddr, Paymentspk, txidpk);
+CCaddr1of2set(cp, Paymentspk, txidpk, cp->CCpriv, destaddr);
+
+// sign the transaction:
+rawtx = FinalizeCCTx(0, cp, mtx, mypk, PAYMENTS_TXFEE, CScript());  // use the empty last vout opreturn, we don't need it any more
+```
+
+Now this is an example of how to use cc opret data for improved identification of the Antara module cc outputs (remember that their content is hashed and it is a problem to identify a cc vout). Using a modification to the `IsPaymentsvout` function, we can now spend a `ccvout` in the Payments module back to its own address, without needing a `markervout` or an opreturn.
+
+```cpp
+int64_t IsPaymentsvout(struct CCcontract_info *cp, const CTransaction& tx, int32_t v, char *cmpaddr, CScript &ccopret)
+{
+    char destaddr[64];
+    
+    // use getCCopret instead of former usage of IsPayToCryptoCondition() function
+    // retrieve the application data from cc vout and return it in the `ccopret` reference variable:
     if ( getCCopret(tx.vout[v].scriptPubKey, ccopret) )
     {
         if ( Getscriptaddress(destaddr, tx.vout[v].scriptPubKey) > 0 && (cmpaddr[0] == 0 || strcmp(destaddr, cmpaddr) == 0) )
