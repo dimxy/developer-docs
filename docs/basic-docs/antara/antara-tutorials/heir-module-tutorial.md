@@ -1637,7 +1637,7 @@ dimxy6 seems this looks very much like yet another pattern
 sidd: would you like to rename it and/or add in a separate headline? Feel free to do so, if that would be best.
 --><!-- dimxy7 added a new pattern description and made the current one shorter -->
 
-How to create publickey for a transaction id:
+How to create an unspendable publickey for a transaction id:
 ```cpp
 // use Antara SDK function to create a public key from some transaction id:
 CPubKey txidpk = CCtxidaddr(txidaddr, createtxid);
@@ -1651,7 +1651,7 @@ mtx.vout.push_back(MakeCC1of2vout(EVAL_PAYMENTS, inputsum-PAYMENTS_TXFEE, Paymen
 
 How to spend 1 of 2 pubkeys outputs with txid pubkey in a previous transaction:
 ```cpp
-// function AddPaymentsInputs adds 1of2 inputs to the mtx object (the function parameters are not important for now): 
+// function AddPaymentsInputs adds inputs from the address of 1of2 pubkeys (global and txid pk) outputs to the mtx object (the function parameters are not important for now): 
 if ( (inputsum= AddPaymentsInputs(true,0,cp,mtx,txidpk,newamount+2*PAYMENTS_TXFEE,CC_MAXVINS/2,createtxid,lockedblocks,minrelease,blocksleft)) >= newamount+2*PAYMENTS_TXFEE )
 {
     // Get the address for 1 of 2 pubkeys cc output (into `destaddress` variable):
@@ -1660,7 +1660,7 @@ if ( (inputsum= AddPaymentsInputs(true,0,cp,mtx,txidpk,newamount+2*PAYMENTS_TXFE
     // Set the pubkeys, address and global private key for spending the 1 of 2 pubkeys address (which also consists of the global and txid pk) in the previous transaction: 
     CCaddr1of2set(cp, Paymentspk, txidpk, cp->CCpriv, destaddr);
 
-    // Sign the transaction:
+    // Sign the transaction in the mtx variable:
     std::string rawtx = FinalizeCCTx(0, cp, mtx, mypk, PAYMENTS_TXFEE, CScript());
     // return `rawtx` to the user...
 }
@@ -1678,7 +1678,7 @@ std::vector<unsigned char>> opret = EncodePaymentsMergeOpRet(createtxid);  // cr
 // create a public key from a transaction id as it was made in 'Txidaddress pattern':
 CPubKey txidpk = CCtxidaddr(txidaddr, createtxid);
 
-// create vData opject that will be added to cc vout:
+// create vData object that will be added to cc vout:
 std::vector<std::vector<unsigned char>> vData = std::vector<std::vector<unsigned char>>();
 
 // Put the opreturn into vData object:
@@ -1687,7 +1687,7 @@ if ( makeCCopret(opret, vData) )  {
     mtx.vout.push_back(MakeCC1of2vout(EVAL_PAYMENTS, inputsum-PAYMENTS_TXFEE, Paymentspk, txidpk, &vData));
 }
     
-// some other stuff to prepare the transaction for signing:    
+// some other stuff to prepare the parameters for signing the transaction:    
 GetCCaddress1of2(cp, destaddr, Paymentspk, txidpk);
 CCaddr1of2set(cp, Paymentspk, txidpk, cp->CCpriv, destaddr);
 
@@ -1698,11 +1698,12 @@ rawtx = FinalizeCCTx(0, cp, mtx, mypk, PAYMENTS_TXFEE, CScript());  // use the e
 Now this is an example how to use cc opret data for identification of Antara module cc outputs (remember that a cc output's content is hashed and it is a problem to identify a cc vout). Using a modification to the `IsPaymentsvout` function, we can now spend a `ccvout` in the Payments module back to its own address, without needing a `markervout` or an opreturn.
 
 ```cpp
+// function used to check if this is a Payments module vout:
 int64_t IsPaymentsvout(struct CCcontract_info *cp, const CTransaction& tx, int32_t v, char *cmpaddr, CScript &ccopret)
 {
     char destaddr[64];
     
-    // use getCCopret instead of former usage of IsPayToCryptoCondition() function
+    // use getCCopret instead of the former usage of IsPayToCryptoCondition() function
     // retrieve the application data from cc vout script pubkey and return it in the `ccopret` reference variable:
     if ( getCCopret(tx.vout[v].scriptPubKey, ccopret) )
     {
@@ -1712,7 +1713,7 @@ int64_t IsPaymentsvout(struct CCcontract_info *cp, const CTransaction& tx, int32
     return(0);
 }
 ```
-Note, that if you need additionally differenciate the cc outputs in the transaction you may also analyze the ccopret content, for instance, the eval code stored in it. 
+Note, that if you need additionally differenciate the cc outputs in a transaction (for example, from another Antara module vouts) you may also analyze the ccopret content, specifically the eval code stored in it. 
 
 In place of the `IsPayToCryptoCondition()` function we can use the `getCCopret()` function. This latter function is a lower level of the former call, and will return any `vData` appended to the `ccvout` along with a `true`/`false` value that would otherwise be returned by the `IsPayToCryptoCondition()` function. 
 
@@ -1721,7 +1722,8 @@ In validation, we now have a totally different transaction type than the types t
 ```cpp
 if ( tx.vout.size() == 1 )
 {
-    if ( IsPaymentsvout(cp, tx, 0, coinaddr, ccopret) != 0 && ccopret.size() > 2 && DecodePaymentsMergeOpRet(ccopret, createtxid) )
+    // IsPaymentsvout returns application data in `ccopret` variable, the returned data is checked immediately:
+    if ( IsPaymentsvout(cp, tx, 0, coinaddr, ccopret) != 0 && ccopret.size() > 2 && DecodePaymentsMergeOpRet(ccopret, createtxid) == 'M' )
     {
         fIsMerge = true;
     } else return(eval->Invalid("not enough vouts"));
