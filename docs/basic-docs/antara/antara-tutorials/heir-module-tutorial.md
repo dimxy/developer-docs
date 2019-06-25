@@ -1637,10 +1637,12 @@ dimxy6 seems this looks very much like yet another pattern
 sidd: would you like to rename it and/or add in a separate headline? Feel free to do so, if that would be best.
 --><!-- dimxy7 added a new pattern description and made the current one shorter -->
 
+How to create publickey for a transaction id:
 ```cpp
 // use Antara SDK function to create a public key from some transaction id:
 CPubKey txidpk = CCtxidaddr(txidaddr, createtxid);
 ```
+
 How to create a cc vout with 1 of 2 pubkeys, one of which is txid pubkey
 ```cpp
 // create a cc vout with 1 of 2 pubkeys, one of which is txid pubkey
@@ -1649,17 +1651,18 @@ mtx.vout.push_back(MakeCC1of2vout(EVAL_PAYMENTS, inputsum-PAYMENTS_TXFEE, Paymen
 
 How to spend 1 of 2 pubkeys outputs with txid pubkey in a previous transaction:
 ```cpp
-// function AddPaymentsInputs adds 1of2 inputs to the mtx object: 
+// function AddPaymentsInputs adds 1of2 inputs to the mtx object (the function parameters are not important for now): 
 if ( (inputsum= AddPaymentsInputs(true,0,cp,mtx,txidpk,newamount+2*PAYMENTS_TXFEE,CC_MAXVINS/2,createtxid,lockedblocks,minrelease,blocksleft)) >= newamount+2*PAYMENTS_TXFEE )
 {
-    // find the address for the same 1 of 2 pubkeys cc output:
+    // Get the address for 1 of 2 pubkeys cc output (into `destaddress` variable):
     GetCCaddress1of2(cp, destaddr, Paymentspk, txidpk);
 
-    // set the pubkeys, address and global private key for spending the 1 of 2 pubkeys address (which also consists of the global and txid pk) in the previous transaction: 
+    // Set the pubkeys, address and global private key for spending the 1 of 2 pubkeys address (which also consists of the global and txid pk) in the previous transaction: 
     CCaddr1of2set(cp, Paymentspk, txidpk, cp->CCpriv, destaddr);
 
-    // sign the transaction:
-    rawtx = FinalizeCCTx(0, cp, mtx, mypk, PAYMENTS_TXFEE, CScript());
+    // Sign the transaction:
+    std::string rawtx = FinalizeCCTx(0, cp, mtx, mypk, PAYMENTS_TXFEE, CScript());
+    // return `rawtx` to the user...
 }
 ```
 
@@ -1692,7 +1695,7 @@ CCaddr1of2set(cp, Paymentspk, txidpk, cp->CCpriv, destaddr);
 rawtx = FinalizeCCTx(0, cp, mtx, mypk, PAYMENTS_TXFEE, CScript());  // use the empty last vout opreturn, we don't need it any more
 ```
 
-Now this is an example of how to use cc opret data for identification of Antara module cc outputs (remember that a cc output's content is hashed and it is a problem to identify a cc vout). Using a modification to the `IsPaymentsvout` function, we can now spend a `ccvout` in the Payments module back to its own address, without needing a `markervout` or an opreturn.
+Now this is an example how to use cc opret data for identification of Antara module cc outputs (remember that a cc output's content is hashed and it is a problem to identify a cc vout). Using a modification to the `IsPaymentsvout` function, we can now spend a `ccvout` in the Payments module back to its own address, without needing a `markervout` or an opreturn.
 
 ```cpp
 int64_t IsPaymentsvout(struct CCcontract_info *cp, const CTransaction& tx, int32_t v, char *cmpaddr, CScript &ccopret)
@@ -1700,7 +1703,7 @@ int64_t IsPaymentsvout(struct CCcontract_info *cp, const CTransaction& tx, int32
     char destaddr[64];
     
     // use getCCopret instead of former usage of IsPayToCryptoCondition() function
-    // retrieve the application data from cc vout script-pubkey and return it in the `ccopret` reference variable:
+    // retrieve the application data from cc vout script pubkey and return it in the `ccopret` reference variable:
     if ( getCCopret(tx.vout[v].scriptPubKey, ccopret) )
     {
         if ( Getscriptaddress(destaddr, tx.vout[v].scriptPubKey) && (cmpaddr[0] == 0 || strcmp(destaddr, cmpaddr) == 0) )
@@ -1709,7 +1712,7 @@ int64_t IsPaymentsvout(struct CCcontract_info *cp, const CTransaction& tx, int32
     return(0);
 }
 ```
-Note, that if you need additionally differenciate the cc outputs you may also analyze the ccopret content, for instance, the eval code stored in it. 
+Note, that if you need additionally differenciate the cc outputs in the transaction you may also analyze the ccopret content, for instance, the eval code stored in it. 
 
 In place of the `IsPayToCryptoCondition()` function we can use the `getCCopret()` function. This latter function is a lower level of the former call, and will return any `vData` appended to the `ccvout` along with a `true`/`false` value that would otherwise be returned by the `IsPayToCryptoCondition()` function. 
 
